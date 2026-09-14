@@ -1,0 +1,2935 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Pembelajaran Matriks - Final Project</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+<style>
+/* ============================================
+   BACKGROUND BERBEDA: ADMIN vs SISWA
+   ============================================ */
+body {
+    background: #0a0a0f;
+    background-image: radial-gradient(ellipse at 20% 0%, #1a1a2e 0%, transparent 50%),
+                      radial-gradient(ellipse at 80% 100%, #16213e 0%, transparent 50%),
+                      linear-gradient(180deg, #0a0a0f 0%, #12122b 50%, #0a0a0f 100%);
+    background-attachment: fixed;
+}
+body.role-admin {
+    background: #eeeae0;
+    background-attachment: fixed;
+}
+body.role-siswa {
+    background: #F5F3EE;
+    background-image: radial-gradient(ellipse at 20% 0%, #2e1a4a 0%, transparent 50%),
+                      radial-gradient(ellipse at 80% 100%, #1f0f3e 0%, transparent 50%),
+                      linear-gradient(180deg, #1a0a2e 0%, #1f0f3e 50%, #1a0a2e 100%);
+    background-attachment: fixed;
+}
+body.role-admin #headerAdmin {
+    background: rgba(7, 26, 47, 0.95);
+}
+body.role-admin #headerAdmin .header-name { color: #4A9EFF; }
+body.role-admin #headerAdmin .header-sub { color: #7BB8FF; }
+body.role-siswa #headerSiswa {
+    background: rgba(26, 10, 46, 0.95);
+}
+body.role-siswa #headerSiswa .header-name { color: #B57EFF; }
+body.role-siswa #headerSiswa .header-sub { color: #D4A6FF; }
+
+* { margin:0; padding:0; box-sizing:border-box; }
+html, body { height: 100%; }
+body {
+    font-family: 'Inter', sans-serif;
+    background: #0a0a0f;
+    background-image: radial-gradient(ellipse at 20% 0%, #1a1a2e 0%, transparent 50%),
+                      radial-gradient(ellipse at 80% 100%, #16213e 0%, transparent 50%),
+                      linear-gradient(180deg, #0a0a0f 0%, #12122b 50%, #0a0a0f 100%);
+    background-attachment: fixed;
+    min-height: 100vh;
+    color: #e8e8f0;
+}
+
+/* ===== STICKY HEADER ===== */
+.sticky-header {
+    position: sticky;
+    top: 0; left: 0; right: 0;
+    z-index: 1000;
+    background: rgba(10, 10, 15, 0.92);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 2px solid #FFD700;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+.sticky-header-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+.header-brand {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-width: 0;
+    flex: 1;
+}
+.header-logo {
+    height: 52px; width: 52px;
+    object-fit: contain; flex-shrink: 0;
+    border-radius: 12px;
+    background: rgba(255, 215, 0, 0.08);
+    padding: 4px;
+    border: 1px solid rgba(255, 215, 0, 0.25);
+}
+.header-logo-fallback {
+    height: 52px; width: 52px; flex-shrink: 0;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #FFD700, #b8860b);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 1.3rem; color: #1a1a1a;
+}
+.header-text { display: flex; flex-direction: column; min-width: 0; gap: 1px; }
+.header-name {
+    font-size: 1rem; font-weight: 700; color: #FFD700;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.header-sub {
+    font-size: 0.7rem; font-weight: 600; color: #b8860b;
+    letter-spacing: 0.5px; text-transform: uppercase;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.header-avatar {
+    height: 52px; width: 52px; flex-shrink: 0;
+    border-radius: 50%;
+    border: 2px solid #FFD700;
+    background: linear-gradient(135deg, #1a1a2e, #0a0a0f);
+    cursor: pointer; transition: 0.2s;
+    overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+}
+.header-avatar:hover { transform: scale(1.06); box-shadow: 0 0 0 4px rgba(255, 215, 0, 0.2); }
+.header-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.header-avatar .avatar-initials { font-size: 1.3rem; font-weight: 800; color: #FFD700; }
+.header-avatar .edit-badge {
+    position: absolute; bottom: -2px; right: -2px;
+    background: #FFD700; color: #1a1a1a;
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.6rem;
+    border: 2px solid #0a0a0f;
+}
+.header-exit {
+    background: linear-gradient(135deg, #8B0000, #cc0000);
+    border: 2px solid #cc0000;
+    color: #ffffff;
+    padding: 10px 20px;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: 0.25s;
+    font-family: 'Inter', sans-serif;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+    white-space: nowrap;
+}
+.header-exit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(204, 0, 0, 0.4);
+    background: linear-gradient(135deg, #a00000, #e60000);
+}
+
+/* ===== MAIN ===== */
+.main-content {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 32px 20px 60px;
+}
+
+/* ===== LOGIN ===== */
+#loginPage { max-width: 520px; margin: 60px auto; padding: 0 20px; }
+.login-card {
+    background: #ffffff;
+    padding: 50px 40px;
+    border-radius: 28px;
+    border: 2px solid #FFD700;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.4), 0 0 0 8px rgba(255, 215, 0, 0.06);
+    text-align: center;
+}
+.school-header { display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 20px; }
+.school-logo { height: 45px; width: auto; }
+.school-name { color: #8B0000; font-size: 0.8rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
+.main-title { font-size: 2rem; font-weight: 800; color: #b8860b; }
+.subtitle { color: #666; font-size: 0.9rem; margin: 8px 0 20px; }
+.divider { height:1px; background:linear-gradient(90deg,transparent,#FFD700,transparent); margin:20px 0 28px; }
+.input-group { text-align:left; margin-bottom:24px; }
+.input-group label { display:block; font-weight:600; color:#333; font-size:0.85rem; margin-bottom:8px; }
+.input-group label i { margin-right:10px; color:#FFD700; }
+.input-group input {
+    width:100%; padding:16px 20px; background:#f8f8f5;
+    border:2px solid #ddd; border-radius:14px;
+    font-size:1rem; color:#1a1a1a; outline:none; font-family:'Inter',sans-serif;
+    transition: border-color 0.3s;
+}
+.input-group input:focus { border-color:#FFD700; background:#fff; }
+.input-group input::placeholder { color:#aaa; }
+.input-hint { display:block; color:#999; font-size:0.75rem; margin-top:8px; }
+.btn-primary {
+    background: linear-gradient(135deg, #FFD700, #f0c000);
+    border: 2px solid #d4a800;
+    padding: 16px 30px;
+    border-radius: 14px;
+    color: #1a1a1a;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: 0.3s;
+    width: 100%;
+    font-family: 'Inter', sans-serif;
+    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(255, 215, 0, 0.4); }
+.error-msg { color:#cc0000; margin-top:16px; font-weight:600; font-size:0.9rem; min-height:24px; }
+
+/* ===== CONTENT CARD ===== */
+.content-card {
+    background: rgba(20, 20, 35, 0.85);
+    border: 2px solid rgba(255, 215, 0, 0.25);
+    border-radius: 24px;
+    padding: 28px 32px;
+    margin-bottom: 22px;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+}
+.content-card h3 {
+    color: #FFD700;
+    font-size: 1.15rem;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.content-card p { color: #b0b0c0; font-size: 0.9rem; line-height: 1.6; }
+
+/* ===== MENU GRID (Siswa) ===== */
+.menu-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 18px;
+    margin-bottom: 22px;
+}
+.menu-card {
+    background: rgba(20, 20, 35, 0.85);
+    border: 2px solid rgba(255, 215, 0, 0.2);
+    border-radius: 20px;
+    padding: 28px 24px;
+    cursor: pointer;
+    transition: 0.3s;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    position: relative;
+    overflow: hidden;
+}
+.menu-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #FFD700, #b8860b);
+    opacity: 0;
+    transition: 0.3s;
+}
+.menu-card:hover {
+    border-color: #FFD700;
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(255, 215, 0, 0.18);
+}
+.menu-card:hover::before { opacity: 1; }
+.menu-card-icon {
+    width: 56px; height: 56px;
+    border-radius: 14px;
+    background: rgba(255, 215, 0, 0.12);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.6rem;
+    color: #FFD700;
+    border: 1px solid rgba(255, 215, 0, 0.25);
+}
+.menu-card h3 { font-size: 1.15rem; font-weight: 700; color: #fff; margin: 0; }
+.menu-card p { font-size: 0.85rem; color: #9090a0; line-height: 1.5; margin: 0; }
+
+/* ===== ADMIN TABS ===== */
+.admin-tabs {
+    display: flex;
+    gap: 6px;
+    background: rgba(20, 20, 35, 0.85);
+    border: 2px solid rgba(255, 215, 0, 0.2);
+    border-radius: 18px;
+    padding: 6px;
+    margin-bottom: 22px;
+    overflow-x: auto;
+    scrollbar-width: thin;
+}
+.admin-tabs::-webkit-scrollbar { height: 6px; }
+.admin-tabs::-webkit-scrollbar-thumb { background: rgba(255, 215, 0, 0.3); border-radius: 3px; }
+.admin-tab {
+    flex: 1;
+    min-width: 130px;
+    padding: 12px 18px;
+    border-radius: 12px;
+    border: none;
+    background: transparent;
+    color: #9090a0;
+    font-weight: 600;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: 0.25s;
+    font-family: 'Inter', sans-serif;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    white-space: nowrap;
+}
+.admin-tab:hover { color: #FFD700; background: rgba(255, 215, 0, 0.05); }
+.admin-tab.active {
+    background: linear-gradient(135deg, #FFD700, #f0c000);
+    color: #1a1a1a;
+    box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
+}
+.admin-tab i { font-size: 0.95rem; }
+.admin-tab-content { display: none; }
+.admin-tab-content.active { display: block; animation: fadeIn 0.25s ease; }
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== ADMIN SECTION ===== */
+.admin-section {
+    background: rgba(20, 20, 35, 0.85);
+    border: 2px solid rgba(255, 215, 0, 0.18);
+    border-radius: 20px;
+    padding: 22px 26px;
+    margin-bottom: 20px;
+}
+.admin-section h3 {
+    color: #FFD700;
+    font-size: 1.05rem;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* ===== ACCORDION BANK SOAL ===== */
+.accordion-item {
+    background: rgba(20, 20, 35, 0.85);
+    border: 2px solid rgba(255, 215, 0, 0.18);
+    border-radius: 16px;
+    margin-bottom: 14px;
+    overflow: hidden;
+    transition: border-color 0.25s;
+}
+.accordion-item.open { border-color: rgba(255, 215, 0, 0.5); }
+.accordion-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    cursor: pointer;
+    background: rgba(0, 0, 0, 0.2);
+    transition: background 0.2s;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+.accordion-header:hover { background: rgba(255, 215, 0, 0.05); }
+.accordion-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 700;
+    color: #FFD700;
+    font-size: 1rem;
+    flex: 1;
+    min-width: 0;
+}
+.accordion-title i.chevron {
+    transition: transform 0.25s;
+    font-size: 0.85rem;
+    color: #9090a0;
+}
+.accordion-item.open .accordion-title i.chevron { transform: rotate(90deg); }
+.accordion-token {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+}
+.accordion-token label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #9090a0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.accordion-token input {
+    padding: 8px 14px;
+    border: 2px solid rgba(255, 215, 0, 0.3);
+    border-radius: 10px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+    font-weight: 800;
+    color: #FFD700;
+    background: rgba(0, 0, 0, 0.4);
+    outline: none;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    width: 130px;
+    transition: border-color 0.2s;
+}
+.accordion-token input:focus { border-color: #FFD700; background: rgba(0,0,0,0.6); }
+.accordion-token .token-saved {
+    color: #28a745;
+    font-size: 0.85rem;
+    opacity: 0;
+    transition: opacity 0.3s;
+    margin-left: 4px;
+}
+.accordion-token .token-saved.show { opacity: 1; }
+
+.accordion-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease;
+    padding: 0 20px;
+}
+.accordion-item.open .accordion-body {
+    max-height: 20000px;
+    padding: 20px;
+}
+
+.soal-edit-item {
+    background: rgba(0, 0, 0, 0.25);
+    border: 1px solid rgba(255, 215, 0, 0.12);
+    border-radius: 12px;
+    padding: 16px 18px;
+    margin-bottom: 12px;
+}
+.soal-edit-item .soal-num {
+    display: inline-block;
+    background: rgba(255, 215, 0, 0.15);
+    color: #FFD700;
+    padding: 3px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+.soal-edit-item label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #9090a0;
+    margin-bottom: 4px;
+    margin-top: 8px;
+}
+.soal-edit-item textarea,
+.soal-edit-item input[type=text] {
+    width: 100%;
+    padding: 9px 12px;
+    border: 2px solid rgba(255, 215, 0, 0.15);
+    border-radius: 9px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.85rem;
+    color: #e8e8f0;
+    outline: none;
+    background: rgba(0, 0, 0, 0.3);
+    transition: border-color 0.2s;
+    resize: vertical;
+}
+.soal-edit-item textarea:focus,
+.soal-edit-item input[type=text]:focus {
+    border-color: #FFD700;
+    background: rgba(0, 0, 0, 0.4);
+}
+.soal-edit-item .opsi-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 6px;
+}
+.soal-edit-item .opsi-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.soal-edit-item .opsi-row .opsi-lbl {
+    font-weight: 800;
+    color: #FFD700;
+    font-size: 0.9rem;
+    width: 20px;
+    flex-shrink: 0;
+}
+.soal-edit-item .opsi-row input { flex: 1; }
+.soal-edit-item .kunci-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+}
+.soal-edit-item .kunci-row > span {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #9090a0;
+}
+.soal-edit-item .kunci-row label {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    margin: 0;
+    font-size: 0.85rem;
+    color: #e8e8f0;
+    cursor: pointer;
+    padding: 5px 10px;
+    border: 2px solid rgba(255, 215, 0, 0.15);
+    border-radius: 8px;
+    transition: all 0.15s;
+}
+.soal-edit-item .kunci-row label:hover { border-color: #FFD700; background: rgba(255, 215, 0, 0.05); }
+.soal-edit-item .kunci-row input[type=radio] { accent-color: #28a745; }
+.soal-edit-item .kunci-row label.checked { border-color: #28a745; background: rgba(40, 167, 69, 0.1); color: #6fe08a; }
+
+/* ===== BUTTONS ===== */
+.btn-sm {
+    padding: 7px 14px;
+    border-radius: 9px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    cursor: pointer;
+    border: 2px solid;
+    font-family: 'Inter', sans-serif;
+    transition: 0.2s;
+    background: transparent;
+}
+.btn-sm.open-btn { border-color: #28a745; color: #28a745; }
+.btn-sm.open-btn:hover { background: #28a745; color: #fff; }
+.btn-sm.lock-btn { border-color: #cc0000; color: #cc0000; }
+.btn-sm.lock-btn:hover { background: #cc0000; color: #fff; }
+.btn-sm.delete-btn { border-color: #888; color: #888; }
+.btn-sm.delete-btn:hover { background: #888; color: #fff; }
+.btn-sm.save-btn { border-color: #FFD700; color: #FFD700; }
+.btn-sm.save-btn:hover { background: #FFD700; color: #1a1a1a; }
+.btn-sm.start-btn {
+    border-color: #22c55e;
+    color: #22c55e;
+    background: rgba(34, 197, 94, 0.08);
+    margin-left: 6px;
+}
+.btn-sm.start-btn:hover {
+    background: #22c55e;
+    color: #fff;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+}
+.btn-sm.start-btn i { margin-right: 3px; }
+.btn-sm:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.admin-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background: rgba(0, 0, 0, 0.25);
+    border-radius: 12px;
+    margin-bottom: 8px;
+    border: 1px solid rgba(255, 215, 0, 0.1);
+    gap: 10px;
+    flex-wrap: wrap;
+}
+.admin-row .label { font-weight: 600; color: #e8e8f0; font-size: 0.9rem; }
+.admin-row .status { font-weight: 700; font-size: 0.85rem; }
+.admin-row .status.open { color: #28a745; }
+.admin-row .status.locked { color: #cc0000; }
+.admin-row .actions { display: flex; gap: 6px; flex-wrap: wrap; }
+
+/* ===== PESERTA LIST ===== */
+.peserta-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background: rgba(0, 0, 0, 0.25);
+    border: 1px solid rgba(255, 215, 0, 0.1);
+    border-radius: 12px;
+    margin-bottom: 8px;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+.peserta-item .peserta-info { flex: 1; min-width: 0; }
+.peserta-item .peserta-nama { font-weight: 700; color: #e8e8f0; font-size: 0.95rem; }
+.peserta-item .peserta-nisn { color: #9090a0; font-size: 0.8rem; margin-top: 2px; }
+.peserta-item .peserta-status {
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+.peserta-item .peserta-status.sudah { background: rgba(40, 167, 69, 0.15); color: #6fe08a; }
+.peserta-item .peserta-status.belum { background: rgba(255, 215, 0, 0.1); color: #FFD700; }
+
+/* ===== MATRIX DISPLAY ===== */
+.matrix-wrapper {
+    display: inline-flex;
+    align-items: stretch;
+    vertical-align: middle;
+    margin: 0 4px;
+    font-family: 'Courier New', monospace;
+}
+.matrix-bracket {
+    display: flex;
+    align-items: stretch;
+    font-size: 1.3rem;
+    font-weight: 300;
+    color: #FFD700;
+    padding: 0 2px;
+    user-select: none;
+    opacity: 0.85;
+    width: 16px;
+    justify-content: center;
+}
+.matrix-bracket.left {
+    border-left: 2.5px solid #FFD700;
+    border-top: 2.5px solid #FFD700;
+    border-bottom: 2.5px solid #FFD700;
+    border-radius: 6px 0 0 6px;
+    margin-right: 2px;
+}
+.matrix-bracket.right {
+    border-right: 2.5px solid #FFD700;
+    border-top: 2.5px solid #FFD700;
+    border-bottom: 2.5px solid #FFD700;
+    border-radius: 0 6px 6px 0;
+    margin-left: 2px;
+}
+.matrix-content {
+    display: inline-block;
+    text-align: center;
+    padding: 2px 6px;
+    background: rgba(255, 215, 0, 0.06);
+    border-radius: 4px;
+    line-height: 1.7;
+}
+.matrix-content .row { display: block; padding: 1px 0; }
+.matrix-content .row .cell { display: inline-block; min-width: 28px; text-align: center; padding: 0 4px; font-size: 0.95rem; color: #e8e8f0; }
+.matrix-content .row .cell.negative { min-width: 34px; }
+.matrix-content .row .cell.variable { color: #FFD700; font-style: italic; }
+
+/* ===== PECAHAN VISUAL ===== */
+.frac {
+    display: inline-flex;
+    align-items: center;
+    vertical-align: middle;
+    margin: 0 4px;
+    position: relative;
+    top: -0.1em;
+}
+.frac .frac-stack {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    line-height: 1.05;
+    font-size: 0.85em;
+}
+.frac .num {
+    padding: 0 4px;
+    border-bottom: 1.5px solid currentColor;
+    text-align: center;
+}
+.frac .den {
+    padding: 0 4px;
+    text-align: center;
+}
+.frac .minus {
+    font-size: 0.95em;
+    margin-right: 2px;
+    line-height: 1;
+}
+
+/* ===== MATERI ===== */
+.materi-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 22px;
+    padding-bottom: 18px;
+    border-bottom: 2px solid rgba(255, 215, 0, 0.15);
+    flex-wrap: wrap;
+    gap: 12px;
+}
+.materi-header h2 { font-size: 1.4rem; font-weight: 700; color: #FFD700; }
+.materi-header h2 i { margin-right: 10px; }
+.tabs-pertemuan { display: flex; gap: 12px; margin-bottom: 28px; flex-wrap: wrap; }
+.tab-btn {
+    background: rgba(0, 0, 0, 0.3);
+    border: 2px solid rgba(255, 215, 0, 0.2);
+    padding: 12px 26px;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: 0.25s;
+    font-family: 'Inter', sans-serif;
+    color: #b0b0c0;
+}
+.tab-btn:hover { border-color: #FFD700; color: #FFD700; transform: translateY(-2px); }
+.tab-btn.active {
+    background: #FFD700;
+    border-color: #FFD700;
+    color: #1a1a1a;
+    box-shadow: 0 6px 20px rgba(255, 215, 0, 0.35);
+}
+.tab-btn.locked { opacity: 0.5; cursor: not-allowed; }
+.tab-btn .lock-icon { margin-left: 6px; color: #cc0000; }
+
+.materi-content { color: #d0d0e0; line-height: 1.9; }
+.topic-section {
+    background: rgba(20, 20, 35, 0.7);
+    border-radius: 18px;
+    padding: 26px 32px;
+    margin-bottom: 22px;
+    border: 1px solid rgba(255, 215, 0, 0.15);
+}
+.topic-section h3 {
+    color: #FFD700;
+    font-size: 1.2rem;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.topic-section h4 { color: #b8860b; margin: 16px 0 10px; font-size: 1rem; }
+.topic-section p { color: #d0d0e0; margin-bottom: 10px; }
+.topic-section ul { list-style: none; padding: 0; }
+.topic-section ul li { padding: 6px 0 6px 26px; position: relative; font-size: 0.95rem; }
+.topic-section ul li::before { content: "▸"; position: absolute; left: 0; color: #FFD700; }
+.formula {
+    background: rgba(255, 215, 0, 0.08);
+    padding: 14px 22px;
+    border-radius: 12px;
+    border-left: 4px solid #FFD700;
+    margin: 14px 0;
+    font-family: 'Courier New', monospace;
+    font-size: 1.05rem;
+    color: #FFD700;
+    text-align: center;
+}
+.example-box {
+    background: rgba(255, 215, 0, 0.05);
+    padding: 16px 22px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 215, 0, 0.18);
+    margin: 14px 0;
+    font-size: 0.95rem;
+}
+.example-box strong { color: #FFD700; }
+.locked-message { text-align: center; padding: 60px 20px; color: #808090; }
+.locked-message i { font-size: 4rem; color: #cc0000; margin-bottom: 16px; display: block; }
+.locked-message h3 { color: #cc0000; font-size: 1.3rem; margin-bottom: 8px; }
+
+.latihan-container { margin-top: 18px; }
+.latihan-item {
+    background: rgba(0, 0, 0, 0.25);
+    border: 2px solid rgba(255, 215, 0, 0.15);
+    border-radius: 14px;
+    padding: 20px 24px;
+    margin-bottom: 16px;
+}
+.latihan-item.correct { border-color: #28a745; background: rgba(40,167,69,0.05); }
+.latihan-item.wrong { border-color: #dc3545; background: rgba(220,53,69,0.05); }
+.latihan-item .latihan-q { font-weight: 600; color: #e8e8f0; margin-bottom: 12px; font-size: 0.95rem; }
+.latihan-item .latihan-opts { display: flex; flex-direction: column; gap: 8px; }
+.latihan-item .latihan-opts button {
+    background: rgba(0, 0, 0, 0.3);
+    border: 2px solid rgba(255, 215, 0, 0.15);
+    padding: 11px 16px;
+    border-radius: 10px;
+    text-align: left;
+    font-size: 0.9rem;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    color: #d0d0e0;
+    transition: 0.2s;
+}
+.latihan-item .latihan-opts button:hover:not(:disabled) { background: rgba(255,215,0,0.06); border-color: #FFD700; }
+.latihan-item .latihan-opts button:disabled { cursor: not-allowed; }
+.latihan-item .latihan-opts button.benar { border-color:#28a745; background:rgba(40,167,69,0.12); color:#6fe08a; }
+.latihan-item .latihan-opts button.salah { border-color:#dc3545; background:rgba(220,53,69,0.12); color:#ff7d8a; }
+.latihan-feedback { margin-top: 10px; font-size: 0.85rem; font-weight: 600; }
+.latihan-feedback.benar { color: #6fe08a; }
+.latihan-feedback.salah { color: #ff7d8a; }
+
+/* ===== QUIZ ===== */
+#quizPage { max-width: 900px; margin: 0 auto; }
+
+/* ===== POWER-UP BAR (menggabungkan token & timer/skor/mute) ===== */
+.powerup-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 16px;
+    padding: 14px 18px;
+    background: rgba(20, 20, 35, 0.85);
+    border-radius: 16px;
+    border: 2px dashed rgba(255, 215, 0, 0.4);
+    align-items: center;
+}
+.powerup-bar .pu-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #FFD700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-right: 8px;
+}
+.powerup-btn {
+    background: rgba(0, 0, 0, 0.3);
+    border: 2px solid rgba(255, 215, 0, 0.2);
+    padding: 8px 12px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    color: #e8e8f0;
+    transition: 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+.powerup-btn:hover:not(:disabled) { border-color: #FFD700; background: rgba(255,215,0,0.08); transform: translateY(-2px); }
+.powerup-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+.powerup-btn.active-effect { background: rgba(255,215,0,0.2); border-color: #FFD700; }
+.powerup-btn .badge {
+    background: #8B0000;
+    color: #fff;
+    font-size: 0.65rem;
+    padding: 1px 6px;
+    border-radius: 10px;
+    font-weight: 700;
+}
+
+/* Baris 2: Token + Timer + Skor + Mute */
+.powerup-bar .pu-row2 {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    width: 100%;
+    padding-top: 10px;
+    border-top: 1px solid rgba(255, 215, 0, 0.15);
+    justify-content: space-between;
+}
+.powerup-bar .pu-row2-left {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+}
+.powerup-bar .pu-row2-right {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+}
+
+/* Token Display di power-up bar */
+.token-badge {
+    background: rgba(0, 0, 0, 0.4);
+    border: 2px solid #FFD700;
+    border-radius: 10px;
+    padding: 6px 14px;
+    color: #FFD700;
+    font-family: 'Courier New', monospace;
+    font-weight: 800;
+    font-size: 0.9rem;
+    letter-spacing: 1.5px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+.token-badge i { font-size: 0.85rem; }
+
+/* Timer Box */
+.timer-box {
+    background: rgba(255, 215, 0, 0.12);
+    padding: 8px 16px;
+    border-radius: 40px;
+    font-weight: 700;
+    color: #FFD700;
+    border: 2px solid #FFD700;
+    font-size: 0.9rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 88px;
+    justify-content: center;
+}
+.timer-box.warning { border-color: #cc0000; background: rgba(204, 0, 0, 0.15); color: #ff6b6b; animation: blink 0.5s ease-in-out infinite alternate; }
+@keyframes blink { from { opacity: 1; } to { opacity: 0.4; } }
+.timer-box .time-text { font-variant-numeric: tabular-nums; }
+
+/* Score Box — hanya skor aktif */
+.score-box {
+    background: rgba(255, 215, 0, 0.12);
+    padding: 8px 16px;
+    border-radius: 40px;
+    font-weight: 700;
+    color: #FFD700;
+    border: 2px solid #FFD700;
+    font-size: 0.9rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 70px;
+    justify-content: center;
+}
+.score-box i { margin-right: 2px; }
+
+/* Mute Button */
+.mute-btn {
+    background: rgba(255, 215, 0, 0.12);
+    border: 2px solid #FFD700;
+    border-radius: 40px;
+    padding: 8px 14px;
+    color: #FFD700;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: 0.2s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 44px;
+}
+.mute-btn:hover { background: rgba(255, 215, 0, 0.25); transform: scale(1.05); }
+
+/* ===== PROGRESS ===== */
+.progress-container {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 30px;
+    height: 12px;
+    position: relative;
+    margin-bottom: 22px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 215, 0, 0.15);
+}
+.progress-bar {
+    height: 100%;
+    border-radius: 30px;
+    background: linear-gradient(90deg, #FFD700, #f0c000);
+    transition: width 0.5s ease;
+    width: 0%;
+}
+.progress-text {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: #1a1a1a;
+}
+
+/* ===== SOAL ===== */
+.soal-container {
+    background: rgba(20, 20, 35, 0.85);
+    padding: 32px 30px;
+    border-radius: 22px;
+    border: 2px solid rgba(255, 215, 0, 0.25);
+    margin-bottom: 20px;
+}
+.soal-number { color: #9090a0; font-weight: 600; font-size: 0.85rem; margin-bottom: 14px; }
+.soal-number .topic-tag {
+    display: inline-block;
+    background: rgba(255,215,0,0.15);
+    color: #FFD700;
+    padding: 2px 12px;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 10px;
+}
+.soal-text { font-size: 1.1rem; font-weight: 600; color: #e8e8f0; line-height: 1.8; margin-bottom: 24px; min-height: 60px; }
+.pilihan-container { display: flex; flex-direction: column; gap: 12px; }
+.pilihan-container button {
+    background: rgba(0, 0, 0, 0.3);
+    border: 2px solid rgba(255, 215, 0, 0.15);
+    padding: 15px 22px;
+    border-radius: 14px;
+    text-align: left;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: #e8e8f0;
+    cursor: pointer;
+    transition: 0.2s;
+    font-family: 'Inter', sans-serif;
+}
+.pilihan-container button:hover:not(:disabled) { background: rgba(255, 215, 0, 0.08); border-color: #FFD700; }
+.pilihan-container button:disabled { opacity: 0.7; cursor: not-allowed; }
+.pilihan-container button.benar { border-color: #28a745; background: rgba(40,167,69,0.15); color: #6fe08a; }
+.pilihan-container button.salah { border-color: #dc3545; background: rgba(220,53,69,0.15); color: #ff7d8a; }
+.pilihan-container button.eliminated { opacity: 0.25; text-decoration: line-through; }
+
+#feedbackArea {
+    margin-top: 20px;
+    padding: 16px 22px;
+    border-radius: 14px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    background: rgba(0, 0, 0, 0.3);
+    border-left: 4px solid #888;
+    color: #e8e8f0;
+    display: none;
+}
+#feedbackArea.benar { border-left-color: #28a745; background: rgba(40,167,69,0.08); }
+#feedbackArea.salah { border-left-color: #dc3545; background: rgba(220,53,69,0.08); }
+#feedbackArea .jawaban-benar {
+    margin-top: 6px;
+    padding: 8px 14px;
+    background: rgba(40,167,69,0.12);
+    border-radius: 8px;
+    border: 1px solid rgba(40,167,69,0.25);
+    color: #6fe08a;
+    font-weight: 700;
+}
+#feedbackArea .penjelasan {
+    margin-top: 10px;
+    font-weight: 400;
+    color: #b0b0c0;
+    border-top: 1px solid rgba(255, 215, 0, 0.1);
+    padding-top: 12px;
+}
+
+.btn-next {
+    background: linear-gradient(135deg, #FFD700, #f0c000);
+    border: 2px solid #d4a800;
+    padding: 16px 30px;
+    border-radius: 14px;
+    color: #1a1a1a;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: 0.2s;
+    width: 100%;
+    font-family: 'Inter', sans-serif;
+}
+.btn-next:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(255, 215, 0, 0.3); }
+.btn-next:disabled { opacity: 0.3; cursor: not-allowed; }
+
+.btn-quiz-action {
+    background: rgba(0, 0, 0, 0.3);
+    border: 2px solid #cc0000;
+    padding: 12px 24px;
+    border-radius: 12px;
+    color: #ff6b6b;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: 0.2s;
+    font-family: 'Inter', sans-serif;
+}
+.btn-quiz-action:hover { background: #cc0000; color: #fff; }
+
+/* ===== LEADERBOARD ===== */
+.leaderboard-card {
+    background: rgba(20, 20, 35, 0.85);
+    border: 2px solid rgba(255, 215, 0, 0.25);
+    border-radius: 20px;
+    padding: 20px 24px;
+    margin-bottom: 20px;
+}
+.leaderboard-card h3 { color: #FFD700; font-size: 1.05rem; margin-bottom: 14px; }
+.leaderboard-card h3 i { margin-right: 8px; }
+.lb-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 14px;
+    border-radius: 10px;
+    margin-bottom: 6px;
+    background: rgba(0, 0, 0, 0.25);
+    font-size: 0.9rem;
+    color: #d0d0e0;
+}
+.lb-row.me { background: rgba(255,215,0,0.12); border: 1px solid #FFD700; }
+.lb-row .lb-rank { font-weight: 800; color: #FFD700; width: 40px; }
+.lb-row .lb-name { flex: 1; font-weight: 600; color: #e8e8f0; }
+.lb-row .lb-score { font-weight: 800; color: #FFD700; }
+
+/* ===== LOBBY ===== */
+.lobby-card {
+    background: rgba(20, 20, 35, 0.9);
+    border: 2px solid rgba(255, 215, 0, 0.3);
+    border-radius: 22px;
+    padding: 32px 30px;
+}
+.lobby-card h2 { color: #FFD700; font-size: 1.4rem; margin-bottom: 8px; text-align: center; }
+.lobby-card h2 i { margin-right: 8px; }
+.token-display {
+    text-align: center;
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: #FFD700;
+    background: rgba(255,215,0,0.1);
+    padding: 12px 20px;
+    border-radius: 12px;
+    margin: 16px 0;
+    letter-spacing: 2px;
+    border: 1px solid rgba(255, 215, 0, 0.3);
+}
+.lobby-peserta {
+    background: rgba(0, 0, 0, 0.25);
+    border-radius: 12px;
+    padding: 14px 18px;
+    margin-bottom: 16px;
+    min-height: 80px;
+}
+.lobby-peserta h4 { color: #FFD700; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
+.lobby-peserta ul { list-style: none; }
+.lobby-peserta ul li { padding: 4px 0; font-size: 0.9rem; color: #d0d0e0; }
+.lobby-peserta ul li i { color: #28a745; margin-right: 8px; }
+
+/* ===== HASIL ===== */
+.hasil-card {
+    background: rgba(20, 20, 35, 0.9);
+    padding: 40px 36px;
+    border-radius: 24px;
+    border: 2px solid rgba(255, 215, 0, 0.3);
+    text-align: center;
+    margin-top: 20px;
+}
+.hasil-icon { font-size: 4rem; margin-bottom: 16px; }
+.hasil-card h2 { color: #FFD700; font-size: 1.8rem; font-weight: 700; margin-bottom: 16px; }
+.hasil-stats { display: flex; justify-content: center; gap: 24px; flex-wrap: wrap; margin-bottom: 20px; }
+.hasil-stat { text-align: center; }
+.hasil-stat .val { font-size: 2rem; font-weight: 800; color: #FFD700; }
+.hasil-stat .lbl { font-size: 0.8rem; color: #9090a0; }
+.hasil-skor { display: flex; align-items: baseline; justify-content: center; gap: 6px; margin-bottom: 20px; }
+.hasil-skor .value { font-size: 3.2rem; font-weight: 800; color: #FFD700; }
+.hasil-skor .total { color: #808090; font-size: 1.2rem; font-weight: 600; }
+.hasil-card p { color: #b0b0c0; font-size: 1rem; margin-bottom: 24px; }
+.hasil-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-bottom: 12px; }
+
+/* ===== MODAL ===== */
+.modal-backdrop {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(4px);
+    z-index: 2000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+.modal-backdrop.active { display: flex; animation: fadeIn 0.2s; }
+.modal-card {
+    background: #14142b;
+    border: 2px solid rgba(255, 215, 0, 0.4);
+    border-radius: 22px;
+    padding: 28px 30px;
+    max-width: 520px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
+}
+.modal-card h3 {
+    color: #FFD700;
+    font-size: 1.2rem;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.modal-card h3 i { color: #FFD700; }
+.avatar-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+    margin-bottom: 18px;
+}
+.avatar-option {
+    aspect-ratio: 1;
+    border-radius: 50%;
+    border: 3px solid rgba(255, 215, 0, 0.2);
+    background: linear-gradient(135deg, #1a1a2e, #0a0a0f);
+    cursor: pointer;
+    overflow: hidden;
+    transition: 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+.avatar-option img { width: 100%; height: 100%; object-fit: cover; }
+.avatar-option .fallback-init { font-size: 1.2rem; font-weight: 800; color: #FFD700; }
+.avatar-option:hover { transform: scale(1.05); border-color: #FFD700; }
+.avatar-option.selected { border-color: #28a745; box-shadow: 0 0 0 4px rgba(40, 167, 69, 0.3); }
+.avatar-option.selected::after {
+    content: '✓';
+    position: absolute;
+    bottom: -2px;
+    right: -2px;
+    width: 22px;
+    height: 22px;
+    background: #28a745;
+    color: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 800;
+    border: 2px solid #14142b;
+}
+.modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 8px; }
+
+/* ===== TOAST ===== */
+.toast-container {
+    position: fixed;
+    top: 90px;
+    right: 20px;
+    z-index: 3000;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.toast {
+    background: #14142b;
+    border-left: 5px solid #FFD700;
+    padding: 14px 20px;
+    border-radius: 12px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #e8e8f0;
+    min-width: 260px;
+    max-width: 360px;
+    border: 1px solid rgba(255, 215, 0, 0.2);
+    animation: slideIn 0.3s ease;
+}
+.toast.success { border-left-color: #28a745; }
+.toast.error { border-left-color: #dc3545; }
+.toast.info { border-left-color: #FFD700; }
+@keyframes slideIn {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+/* ===== LOADING ===== */
+.loading-overlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(10, 10, 15, 0.98);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+.loading-overlay.active { display: flex; }
+.loading-overlay video { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; }
+
+/* ===== FOOTER ===== */
+.footer-global {
+    text-align: center;
+    padding: 24px 20px;
+    color: #666680;
+    font-size: 0.75rem;
+}
+.hidden { display: none !important; }
+
+/* ===== PREVIEW HEADER (admin) ===== */
+.preview-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 14px;
+    margin-bottom: 6px;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+.preview-header label {
+    margin: 0 !important;
+    color: #FFD700 !important;
+    font-size: 0.8rem !important;
+    font-weight: 700 !important;
+}
+.preview-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+.preview-box { transition: box-shadow 0.3s; overflow: visible !important; max-height: none !important; max-width: 100%; word-wrap: break-word; }
+.preview-box > div {
+    overflow: visible !important;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: normal !important;
+}
+.preview-box > div > div {
+    display: block !important;
+    width: 100%;
+    max-width: 100%;
+    margin: 6px 0 !important;
+    overflow: visible !important;
+    white-space: normal !important;
+    line-height: 1.8;
+}
+.preview-box .matrix-wrapper {
+    max-width: 100%;
+    overflow-x: auto;
+    display: inline-flex;
+    vertical-align: middle;
+}
+.soal-edit-item { overflow: visible !important; max-height: none !important; }
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+    .sticky-header-inner { padding: 10px 14px; gap: 10px; }
+    .header-logo, .header-logo-fallback, .header-avatar { height: 42px; width: 42px; }
+    .header-name { font-size: 0.85rem; }
+    .header-sub { font-size: 0.6rem; }
+    .header-exit { padding: 8px 14px; font-size: 0.75rem; }
+    .main-content { padding: 20px 14px 40px; }
+    .content-card, .admin-section { padding: 18px 20px; }
+    .soal-container { padding: 22px 18px; }
+    .soal-text { font-size: 1rem; }
+    .matrix-content .row .cell { min-width: 22px; font-size: 0.85rem; }
+    .matrix-bracket { width: 12px; font-size: 1rem; }
+    .hasil-actions { flex-direction: column; align-items: center; }
+    .hasil-actions button { width: 100%; }
+    .admin-tab { min-width: 110px; font-size: 0.78rem; padding: 10px 12px; }
+    .avatar-grid { grid-template-columns: repeat(4, 1fr); }
+    .modal-card { padding: 22px 20px; }
+    .soal-edit-item .opsi-grid { grid-template-columns: 1fr; }
+    .accordion-header { padding: 14px 16px; }
+    .accordion-title { font-size: 0.9rem; }
+    .accordion-token input { width: 100px; font-size: 0.85rem; }
+    .accordion-token {
+        flex-wrap: wrap;
+        justify-content: flex-end;
+    }
+    .accordion-token .btn-sm {
+        flex: 1;
+        min-width: 100px;
+        justify-content: center;
+        display: inline-flex;
+        align-items: center;
+    }
+    /* Power-up bar responsif */
+    .powerup-bar { padding: 12px 14px; gap: 8px; }
+    .powerup-btn { padding: 7px 10px; font-size: 0.75rem; }
+    .powerup-bar .pu-row2 { padding-top: 8px; }
+}
+@media (max-width: 480px) {
+    .header-logo, .header-logo-fallback, .header-avatar { height: 36px; width: 36px; }
+    .header-name { font-size: 0.78rem; }
+    .header-sub { display: none; }
+    .header-exit span { display: none; }
+    .header-exit { padding: 8px 12px; }
+    .avatar-grid { grid-template-columns: repeat(3, 1fr); }
+    .accordion-token { width: 100%; justify-content: flex-start; }
+    .accordion-token input { width: 100%; max-width: none; }
+    .matrix-wrapper {
+        max-width: 100%;
+        overflow-x: auto;
+        display: inline-block;
+        vertical-align: middle;
+    }
+    .matrix-content .row .cell { min-width: 18px; font-size: 0.75rem; padding: 0 2px; }
+    .matrix-bracket { width: 10px; font-size: 0.9rem; }
+    .powerup-bar { padding: 10px 12px; }
+    .powerup-bar .pu-label { font-size: 0.7rem; }
+    .powerup-btn { padding: 6px 8px; font-size: 0.7rem; }
+    .token-badge { padding: 5px 10px; font-size: 0.8rem; }
+    .timer-box { padding: 6px 12px; font-size: 0.8rem; min-width: 75px; }
+    .score-box { padding: 6px 12px; font-size: 0.8rem; min-width: 60px; }
+    .mute-btn { padding: 6px 10px; min-width: 38px; }
+}
+</style>
+</head>
+<body id="bodyMain">
+
+<!-- LOADING -->
+<div class="loading-overlay" id="loadingOverlay">
+    <video id="loadingVideo" autoplay loop playsinline muted>
+        <source src="Loading.mp4" type="video/mp4" />
+    </video>
+</div>
+
+<!-- TOAST -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- HEADER ADMIN -->
+<header class="sticky-header hidden" id="headerAdmin">
+    <div class="sticky-header-inner">
+        <div class="header-brand">
+            <img src="logounsika.png" alt="Logo" class="header-logo"
+                 onerror="this.outerHTML='<div class=&quot;header-logo-fallback&quot;>U</div>'" />
+            <div class="header-text">
+                <div class="header-name">Muhammad Fahmi Abdillah</div>
+                <div class="header-sub">Universitas Singaperbangsa Karawang</div>
+            </div>
+        </div>
+        <button class="header-exit" onclick="keluar()">
+            <i class="fas fa-sign-out-alt"></i> <span>Keluar</span>
+        </button>
+    </div>
+</header>
+
+<!-- HEADER SISWA -->
+<header class="sticky-header hidden" id="headerSiswa">
+    <div class="sticky-header-inner">
+        <div class="header-brand">
+            <div class="header-avatar" onclick="openAvatarModal()" title="Klik untuk ubah avatar">
+                <span class="avatar-initials" id="headerAvatarInitial">?</span>
+                <img id="headerAvatarImg" style="display:none;" />
+                <span class="edit-badge"><i class="fas fa-pencil"></i></span>
+            </div>
+            <div class="header-text">
+                <div class="header-name" id="headerSiswaNama">-</div>
+                <div class="header-sub" id="headerSiswaSub">🎓 Siswa • NISN: -</div>
+            </div>
+        </div>
+        <button class="header-exit" onclick="keluar()">
+            <i class="fas fa-sign-out-alt"></i> <span>Keluar</span>
+        </button>
+    </div>
+</header>
+
+<!-- LOGIN -->
+<div id="loginPage">
+    <div class="login-card">
+        <div class="school-header">
+            <img src="logounsika.png" alt="Logo Unsika" class="school-logo"
+                 onerror="this.style.display='none'" />
+            <div class="school-name">Universitas Singaperbangsa Karawang</div>
+        </div>
+        <h1 class="main-title">Pembelajaran Matriks</h1>
+        <p class="subtitle">Belajar Matematika Menyenangkan</p>
+        <div class="divider"></div>
+        <div class="input-group">
+            <label><i class="fas fa-id-card"></i> Nomor Induk Siswa Nasional (NISN)</label>
+            <input type="text" id="nisnInput" placeholder="Masukkan NISN Anda" maxlength="12" />
+            <small class="input-hint">Masukkan NISN Anda Untuk Masuk Portal</small>
+        </div>
+        <button class="btn-primary" onclick="login()"><i class="fas fa-sign-in-alt"></i> Mulai Belajar</button>
+        <p id="loginError" class="error-msg"></p>
+    </div>
+</div>
+
+<!-- SISWA DASHBOARD -->
+<main class="main-content hidden" id="siswaDashboard">
+    <div class="menu-grid">
+        <div class="menu-card" onclick="bukaMateri()">
+            <div class="menu-card-icon"><i class="fas fa-book-open"></i></div>
+            <h3>Materi</h3>
+            <p>3 Pertemuan + Latihan Interaktif</p>
+        </div>
+        <div class="menu-card" onclick="bukaTokenModal()">
+            <div class="menu-card-icon"><i class="fas fa-puzzle-piece"></i></div>
+            <h3>Kuis</h3>
+            <p>Masukkan token untuk bergabung ke kuis interaktif</p>
+        </div>
+    </div>
+</main>
+
+<!-- ADMIN DASHBOARD -->
+<main class="main-content hidden" id="adminDashboard">
+
+    <div class="admin-tabs">
+        <button class="admin-tab active" data-tab="pertemuan" onclick="switchAdminTab('pertemuan')">
+            <i class="fas fa-folder-open"></i> Pertemuan
+        </button>
+        <button class="admin-tab" data-tab="banksoal" onclick="switchAdminTab('banksoal')">
+            <i class="fas fa-database"></i> Bank Soal
+        </button>
+        <button class="admin-tab" data-tab="peserta" onclick="switchAdminTab('peserta')">
+            <i class="fas fa-users"></i> Peserta
+        </button>
+    </div>
+
+    <div class="admin-tab-content active" id="tab-pertemuan">
+        <div class="admin-section">
+            <h3><i class="fas fa-lock"></i> Kunci / Buka Pertemuan</h3>
+            <div id="adminPertemuanList"></div>
+        </div>
+    </div>
+
+    <div class="admin-tab-content" id="tab-banksoal">
+        <div class="admin-section" style="padding-bottom: 10px;">
+            <h3><i class="fas fa-database"></i> Bank Soal (15 Soal per Pertemuan)</h3>
+            <p style="font-size:0.85rem;color:#b0b0c0;margin-bottom:16px;">
+                Klik pertemuan untuk membuka & mengedit soal. Token di kanan dapat langsung diedit.
+            </p>
+            <div id="accordionBankSoal"></div>
+        </div>
+    </div>
+
+    <div class="admin-tab-content" id="tab-peserta">
+        <div class="admin-section">
+            <h3><i class="fas fa-users"></i> Daftar Peserta</h3>
+            <div id="adminPesertaList"></div>
+        </div>
+    </div>
+</main>
+
+<!-- MATERI -->
+<main class="main-content hidden" id="materiPage">
+    <div class="materi-header">
+        <h2><i class="fas fa-book-open"></i> Materi Matriks</h2>
+        <button class="btn-quiz-action" onclick="kembaliKeDashboard()">
+            <i class="fas fa-arrow-left"></i> Kembali
+        </button>
+    </div>
+    <div class="tabs-pertemuan" id="tabsPertemuan">
+        <button class="tab-btn active" data-pertemuan="1" onclick="switchPertemuan(1)">Pertemuan 1</button>
+        <button class="tab-btn" data-pertemuan="2" onclick="switchPertemuan(2)">Pertemuan 2</button>
+        <button class="tab-btn" data-pertemuan="3" onclick="switchPertemuan(3)">Pertemuan 3</button>
+    </div>
+    <div class="materi-content" id="materiContent"></div>
+</main>
+
+<!-- LOBBY -->
+<main class="main-content hidden" id="lobbyPage">
+    <div class="lobby-card">
+        <h2><i class="fas fa-hourglass-half"></i> Menunggu Kuis Dimulai</h2>
+        <div class="token-display" id="lobbyToken">MTX001</div>
+        <p style="text-align:center;color:#b0b0c0;font-size:0.9rem;margin-bottom:16px;">
+            <span id="lobbyNamaKuis">Kuis Matriks</span> • <span id="lobbyJumlahSoal">15</span> soal • <span id="lobbyWaktu">20</span> menit
+        </p>
+        <div class="lobby-peserta">
+            <h4><i class="fas fa-users"></i> Peserta Bergabung</h4>
+            <ul id="lobbyPesertaList"></ul>
+        </div>
+        <div id="lobbyAdminControls" style="display:none;margin-bottom:12px;">
+            <button class="btn-primary" onclick="adminMulaiKuis()"><i class="fas fa-play"></i> ▶ MULAI KUIS</button>
+        </div>
+        <p style="text-align:center;color:#FFD700;font-size:0.8rem;margin-bottom:14px;" id="lobbyWaitMsg">
+            Menunggu kuis dimulai...
+        </p>
+        <button class="btn-quiz-action" style="width:100%;" onclick="keluarLobby()">Kembali ke Dashboard</button>
+    </div>
+</main>
+
+<!-- QUIZ -->
+<main class="main-content hidden" id="quizPage">
+
+    <!-- Power-Up Bar dengan Token + Timer + Skor + Mute -->
+    <div class="powerup-bar" id="powerupBar">
+    <span class="pu-label"><i class="fas fa-bolt"></i> POWER-UP</span>
+    <button class="powerup-btn" id="puDouble" onclick="useDoublePoint()" title="Gandakan poin (maks 2x)">
+        ⭐ Double <span class="badge" id="puDoubleBadge">2</span>
+    </button>
+    <button class="powerup-btn" id="pu5050" onclick="useFiftyFifty()" title="Hilangkan 2 opsi salah">
+        🎯 50:50 <span class="badge" id="pu5050Badge">1</span>
+    </button>
+    <button class="powerup-btn" id="puTimeAttack" onclick="useTimeAttack()" title="Kurangi waktu lawan 10s">
+        ⚡ Serang <span class="badge" id="puTimeAttackBadge">1</span>
+    </button>
+    <button class="powerup-btn" id="puShield" onclick="useShield()" title="Perlindungan 1 menit">
+        🛡️ Perisai <span class="badge" id="puShieldBadge">1</span>
+    </button>
+    <button class="powerup-btn" id="puAddTime" onclick="useAddTime()" title="Tambah waktu 30s">
+        ⏰ +Waktu <span class="badge" id="puAddTimeBadge">1</span>
+    </button>
+
+    <!-- Baris 2: Token (kiri) + Timer + Skor + Mute (kanan) -->
+    <div class="pu-row2">
+        <div class="pu-row2-left">
+            <div class="token-badge">
+                <i class="fas fa-key"></i> <span id="displayToken">-</span>
+            </div>
+            <span id="shieldStatus" style="font-size:0.7rem;font-weight:700;color:#28a745;"></span>
+        </div>
+        <div class="pu-row2-right">
+            <div class="timer-box" id="timerBox">
+                <i class="fas fa-clock"></i>
+                <span class="time-text" id="timerDisplay">20:00</span>
+            </div>
+            <div class="score-box">
+                <i class="fas fa-star"></i> <span id="skorTampil">0</span>
+            </div>
+            <button class="mute-btn" onclick="toggleSound()" id="soundToggleQuiz" title="Sound">
+                <i class="fas fa-volume-up"></i>
+            </button>
+        </div>
+    </div>
+</div>
+
+    <div class="progress-container">
+        <div class="progress-bar" id="progressBar"></div>
+        <span class="progress-text" id="progressText">0 / 15</span>
+    </div>
+
+    <div class="soal-container">
+        <div class="soal-number" id="soalNomor">Soal 1 dari 15 <span class="topic-tag" id="topicTag">Ordo</span></div>
+        <div class="soal-text" id="soalText">Loading...</div>
+        <div class="pilihan-container" id="pilihanContainer"></div>
+        <div id="feedbackArea"></div>
+    </div>
+
+    <button class="btn-next" id="btnNext" disabled onclick="nextSoal()">
+        <i class="fas fa-arrow-right"></i> Soal Berikutnya
+    </button>
+
+    <div id="leaderboardLive" class="leaderboard-card" style="margin-top:20px;">
+        <h3><i class="fas fa-trophy"></i> Leaderboard Sesi</h3>
+        <div id="leaderboardBody"><p style="color:#808090;font-size:0.85rem;">Belum ada data.</p></div>
+    </div>
+
+    <div id="hasilAkhir" style="display:none;">
+        <div class="hasil-card">
+            <div class="hasil-icon" id="hasilIcon">🏆</div>
+            <h2>Kuis Selesai!</h2>
+            <p id="hasilNama" style="color:#FFD700;font-weight:700;font-size:1.1rem;margin-bottom:4px;">-</p>
+            <p id="hasilNISN" style="color:#9090a0;font-size:0.85rem;margin-bottom:16px;">-</p>
+            <div class="hasil-stats">
+                <div class="hasil-stat"><div class="val" id="hasilBenar">0</div><div class="lbl">Benar</div></div>
+                <div class="hasil-stat"><div class="val" id="hasilSalah">0</div><div class="lbl">Salah</div></div>
+                <div class="hasil-stat"><div class="val" id="hasilPeringkat">-</div><div class="lbl">Peringkat</div></div>
+            </div>
+            <div class="hasil-skor">
+                <span class="value" id="skorAkhir">0</span>
+                <span class="total">poin</span>
+            </div>
+            <p id="pesanAkhir"></p>
+            <div class="hasil-actions">
+                <button class="btn-quiz-action" onclick="showPembahasan()"><i class="fas fa-book"></i> Lihat Pembahasan</button>
+                <button class="btn-quiz-action" onclick="kembaliKeDashboard()">Kembali</button>
+            </div>
+        </div>
+        <div id="pembahasanBox" style="display:none;margin-top:20px;"></div>
+    </div>
+</main>
+
+<!-- TOKEN MODAL -->
+<div class="modal-backdrop" id="tokenModal">
+    <div class="modal-card">
+        <h3><i class="fas fa-key"></i> Masukkan Token Kuis</h3>
+        <p style="color:#b0b0c0;font-size:0.9rem;margin-bottom:16px;">Masukkan token yang diberikan gurumu untuk memulai kuis.</p>
+        <div class="input-group" style="margin-bottom:16px;">
+            <label style="color:#b0b0c0;"><i class="fas fa-key"></i> Token</label>
+            <input type="text" id="tokenInput" placeholder="Masukkan Token di Sini" maxlength="12" style="text-transform:uppercase;background:rgba(0,0,0,0.3);color:#e8e8f0;border-color:rgba(255,215,0,0.2);" />
+        </div>
+        <div class="modal-actions">
+            <button class="btn-quiz-action" onclick="closeTokenModal()">Batal</button>
+            <button class="btn-primary" style="width:auto;padding:12px 24px;" onclick="siswaJoinToken()"><i class="fas fa-sign-in-alt"></i> Gabung Kuis</button>
+        </div>
+        <p id="tokenError" class="error-msg" style="color:#ff6b6b;"></p>
+    </div>
+</div>
+
+<!-- AVATAR MODAL -->
+<div class="modal-backdrop" id="avatarModal">
+    <div class="modal-card">
+        <h3><i class="fas fa-user-circle"></i> Pilih Avatar Kamu</h3>
+        <p style="color:#b0b0c0;font-size:0.85rem;margin-bottom:16px;">Klik salah satu avatar di bawah, lalu tekan Simpan.</p>
+        <div class="avatar-grid" id="avatarGrid"></div>
+        <div class="modal-actions">
+            <button class="btn-quiz-action" onclick="closeAvatarModal()">Batal</button>
+            <button class="btn-primary" style="width:auto;padding:12px 24px;" onclick="saveAvatarChoice()">
+                <i class="fas fa-save"></i> Simpan
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="footer-global">
+    <p>© 2026 Muhammad Fahmi Abdillah. Universitas Singaperbangsa Karawang</p>
+</footer>
+
+<script>
+/* ============================================================
+   AUDIO MANAGER
+   ============================================================ */
+let soundEnabled = true;
+let correctSound = null, wrongSound = null, gamesSound = null;
+function initAudio() {
+    try {
+        correctSound = new Audio('CorrectAnswer.mp3');
+        wrongSound = new Audio('WrongAnswer.mp3');
+        gamesSound = new Audio('GamesSounds.mp3');
+        gamesSound.loop = true; gamesSound.volume = 0.5;
+    } catch(e) {}
+}
+function toggleSound() {
+    soundEnabled = !soundEnabled;
+    const btn = document.getElementById('soundToggleQuiz');
+    if (btn) btn.innerHTML = soundEnabled ? '<i class="fas fa-volume-up"></i>' : '<i class="fas fa-volume-mute"></i>';
+    if (!soundEnabled && gamesSound) gamesSound.pause();
+    if (soundEnabled && gamesSound && !document.getElementById('quizPage').classList.contains('hidden')) gamesSound.play().catch(()=>{});
+}
+function playCorrectSound() { if (soundEnabled && correctSound) { correctSound.currentTime = 0; correctSound.play().catch(()=>{}); } }
+function playWrongSound()   { if (soundEnabled && wrongSound)   { wrongSound.currentTime = 0;   wrongSound.play().catch(()=>{}); } }
+function playGamesSound()   { if (soundEnabled && gamesSound)   { gamesSound.currentTime = 0;   gamesSound.play().catch(()=>{}); } }
+function stopGamesSound()   { if (gamesSound) { gamesSound.pause(); gamesSound.currentTime = 0; } }
+
+/* ============================================================
+   TOAST
+   ============================================================ */
+function showToast(msg, type = 'info', duration = 3500) {
+    const c = document.getElementById('toastContainer');
+    const el = document.createElement('div');
+    el.className = 'toast ' + type;
+    el.innerHTML = msg;
+    c.appendChild(el);
+    setTimeout(() => { el.style.opacity = '0'; el.style.transform = 'translateX(100%)'; el.style.transition = '0.3s'; }, duration - 300);
+    setTimeout(() => el.remove(), duration);
+}
+
+/* ============================================================
+   DATA SISWA
+   ============================================================ */
+const dataSiswa = {
+    '12345': { nama: 'Fahmi' },
+    '123456': { nama: 'Ahmad Fauzi' },
+    '1234567': { nama: 'Siti Rahma' },
+    '12345678': { nama: 'Budi Santoso' },
+    '123456789': { nama: 'Dewi Anggraini' },
+    '12345678910': { nama: 'Rizky Ramadhan' },
+    '1234567891011': { nama: 'Putri Amelia' },
+    '123456789101112': { nama: 'Hendra Gunawan' },
+};
+
+/* ============================================================
+   AVATAR CONFIG
+   ============================================================ */
+const AVATAR_CONFIG = { folder: 'avatars/', total: 10, extension: '.png' };
+
+/* ============================================================
+   KONVERSI DESIMAL → PECAHAN OTOMATIS
+   ============================================================ */
+function angkaKePecahan(val) {
+    if (typeof val !== 'number') return val;
+    if (isNaN(val) || !isFinite(val)) return val;
+    if (Number.isInteger(val)) return val;
+
+    function toFraction(x, maxDen = 10000) {
+        const sign = x < 0 ? -1 : 1;
+        x = Math.abs(x);
+        let h1 = 1, h2 = 0;
+        let k1 = 0, k2 = 1;
+        let b = x;
+        do {
+            const a = Math.floor(b);
+            let aux = h1;
+            h1 = a * h1 + h2;
+            h2 = aux;
+            aux = k1;
+            k1 = a * k1 + k2;
+            k2 = aux;
+            b = 1 / (b - a);
+        } while (Math.abs(x - h1 / k1) > x * 1e-10 && k1 <= maxDen);
+
+        return { num: sign * h1, den: k1 };
+    }
+
+    const { num, den } = toFraction(val);
+    if (den === 1) return val;
+
+    const isNegative = num < 0;
+    const absNum = Math.abs(num);
+    const minusHtml = isNegative ? '<span class="minus">−</span>' : '';
+    return `<span class="frac">${minusHtml}<span class="frac-stack"><span class="num">${absNum}</span><span class="den">${den}</span></span></span>`;
+}
+
+function matrixHTML(data) {
+    if (!data || !data.length) return '';
+    let rowsHtml = '';
+    data.forEach(row => {
+        rowsHtml += '<span class="row">';
+        row.forEach(cell => {
+            let cls = 'cell', val = cell;
+            if (typeof cell === 'number') {
+                if (cell < 0) cls += ' negative';
+                val = angkaKePecahan(cell);
+            }
+            else if (typeof cell === 'string') {
+                if (cell.startsWith('-')) cls += ' negative';
+                else if (/[a-zA-Z]/.test(cell)) cls += ' variable';
+            }
+            rowsHtml += `<span class="${cls}">${val}</span>`;
+        });
+        rowsHtml += '</span>';
+    });
+    return `<span class="matrix-wrapper"><span class="matrix-bracket left"></span><span class="matrix-content">${rowsHtml}</span><span class="matrix-bracket right"></span></span>`;
+}
+
+function autoRenderMatrixNotation(text) {
+    if (text == null) return '';
+    text = String(text);
+    const re = /\[([a-zA-Z0-9\.\-\/,\s;]+)\]/g;
+    return text.replace(re, (match, inner) => {
+        if (!inner.includes(';')) return match;
+        const trimmed = inner.trim();
+        if (!trimmed) return match;
+        const rows = trimmed.split(';').map(r => r.trim()).filter(r => r !== '');
+        if (rows.length < 2) return match;
+        const md = rows.map(r => r.split(/[\s,]+/).filter(x => x !== '').map(x => {
+            if (/^-?\d+\/\d+$/.test(x)) {
+                const [num, den] = x.split('/').map(Number);
+                return num / den;
+            }
+            const n = parseFloat(x);
+            return isNaN(n) ? x : n;
+        }));
+        const cols = md[0].length;
+        if (!cols) return match;
+        if (!md.every(row => row.length === cols)) return match;
+        return matrixHTML(md);
+    });
+}
+const LABELS = ['A','B','C','D'];
+
+/* ============================================================
+   SOAL DEFAULT — 15 SOAL × 3 PERTEMUAN
+   ============================================================ */
+const defaultBankSoal = {
+    1: [
+        { topik: 'Ordo', soal: 'Matriks dengan 3 baris dan 2 kolom memiliki ordo...', pilihan: ['2×3','3×2','3×3','2×2'], jawaban: 1, penjelasan: 'Ordo = baris × kolom = 3×2.' },
+        { topik: 'Ordo', soal: 'Berapakah ordo matriks A = [1 2 3; 4 5 6]?', pilihan: ['2×3','3×2','2×2','3×3'], jawaban: 0, penjelasan: '2 baris × 3 kolom = 2×3.' },
+        { topik: 'Ordo', soal: 'Matriks 4×5 memiliki berapa elemen total?', pilihan: ['9','20','16','25'], jawaban: 1, penjelasan: '4 × 5 = 20.' },
+        { topik: 'Ordo', soal: 'Ordo matriks B = [5 7 9; 3 1 4; 6 8 2] adalah...', pilihan: ['3×3','3×2','2×3','4×4'], jawaban: 0, penjelasan: '3 baris × 3 kolom = 3×3.' },
+        { topik: 'Ordo', soal: 'Elemen a₂₁ dari matriks [3 5; 7 9] adalah...', pilihan: ['3','5','7','9'], jawaban: 2, penjelasan: 'a₂₁ = baris 2, kolom 1 = 7.' },
+        { topik: 'Operasi', soal: 'A = [2 4; 3 1], B = [1 2; 0 5]. A + B = ...', pilihan: ['[3 6; 3 6]','[4 6; 3 7]','[3 5; 4 6]','[1 2; 0 5]'], jawaban: 0, penjelasan: 'Jumlahkan seletak: [2+1 4+2; 3+0 1+5] = [3 6; 3 6].' },
+        { topik: 'Operasi', soal: 'A = [5 3; 2 4], B = [2 1; 3 2]. A - B = ...', pilihan: ['[3 2; -1 2]','[3 2; 1 2]','[7 4; 5 6]','[3 2; -1 -2]'], jawaban: 0, penjelasan: 'Kurangkan seletak: [5-2 3-1; 2-3 4-2] = [3 2; -1 2].' },
+        { topik: 'Operasi', soal: 'A = [1 2; 3 4], B = [5 6; 7 8]. A + B = ...', pilihan: ['[6 8; 10 12]','[4 4; 4 4]','[5 12; 21 32]','[1 2; 3 4]'], jawaban: 0, penjelasan: 'Jumlah seletak → [6 8; 10 12].' },
+        { topik: 'Operasi', soal: 'A = [7 2; 1 5], B = [3 4; 2 1]. A - B = ...', pilihan: ['[4 -2; -1 4]','[10 6; 3 6]','[4 2; 1 4]','[-4 2; 1 -4]'], jawaban: 0, penjelasan: '[7-3 2-4; 1-2 5-1] = [4 -2; -1 4].' },
+        { topik: 'Operasi', soal: 'A = [2 1; 1 2]. Jika B = A, maka A + B = ...', pilihan: ['[4 2; 2 4]','[2 1; 1 2]','[1 1; 1 1]','[4 4; 4 4]'], jawaban: 0, penjelasan: 'A + A = 2A = [4 2; 2 4].' },
+        { topik: 'Operasi', soal: 'Matriks A = [3 0; 0 3] dan B = [1 1; 1 1]. A + B = ...', pilihan: ['[4 1; 1 4]','[4 4; 4 4]','[3 3; 3 3]','[2 1; 1 2]'], jawaban: 0, penjelasan: '[3+1 0+1; 0+1 3+1] = [4 1; 1 4].' },
+        { topik: 'Operasi', soal: 'A = [6 5; 4 3], B = [1 2; 3 4]. A - B = ...', pilihan: ['[5 3; 1 -1]','[7 7; 7 7]','[5 3; 1 1]','[6 5; 4 3]'], jawaban: 0, penjelasan: '[6-1 5-2; 4-3 3-4] = [5 3; 1 -1].' },
+        { topik: 'Operasi', soal: 'A = [1 3; 2 4], B = [4 2; 3 1]. A + B = ...', pilihan: ['[5 5; 5 5]','[3 1; -1 3]','[4 6; 6 8]','[2 1; 1 2]'], jawaban: 0, penjelasan: '[1+4 3+2; 2+3 4+1] = [5 5; 5 5].' },
+        { topik: 'Operasi', soal: 'Jika A = [1 2; 3 4], maka A + (-A) = ...', pilihan: ['[0 0; 0 0]','[2 4; 6 8]','[1 2; 3 4]','[-1 -2; -3 -4]'], jawaban: 0, penjelasan: 'A + (-A) = matriks nol.' },
+        { topik: 'Operasi', soal: 'A = [4 1; 2 3], B = [1 1; 1 1]. A - B = ...', pilihan: ['[3 0; 1 2]','[5 2; 3 4]','[3 1; 2 2]','[4 1; 2 3]'], jawaban: 0, penjelasan: '[4-1 1-1; 2-1 3-1] = [3 0; 1 2].' }
+    ],
+    2: [
+        { topik: 'Skalar', soal: '3 × [2 5; 1 4] = ...', pilihan: ['[6 15; 3 12]','[5 8; 4 7]','[7 14; 2 11]','[2 5; 1 4]'], jawaban: 0, penjelasan: 'Setiap elemen × 3 → [6 15; 3 12].' },
+        { topik: 'Skalar', soal: '2 × [1 3; 4 2] = ...', pilihan: ['[2 6; 8 4]','[3 5; 6 4]','[1 3; 4 2]','[4 12; 16 8]'], jawaban: 0, penjelasan: '[2 6; 8 4].' },
+        { topik: 'Skalar', soal: '-1 × [4 5; 6 7] = ...', pilihan: ['[-4 -5; -6 -7]','[4 5; 6 7]','[-4 5; 6 -7]','[1 1; 1 1]'], jawaban: 0, penjelasan: 'Negasi setiap elemen.' },
+        { topik: 'Skalar', soal: '5 × [0 1; 2 3] = ...', pilihan: ['[0 5; 10 15]','[5 6; 7 8]','[0 1; 2 3]','[1 2; 3 4]'], jawaban: 0, penjelasan: '[0 5; 10 15].' },
+        { topik: 'Skalar', soal: '½ × [4 6; 8 10] = ...', pilihan: ['[2 3; 4 5]','[2 3; 4 5]','[8 12; 16 20]','[1 2; 3 4]'], jawaban: 0, penjelasan: '[2 3; 4 5].' },
+        { topik: 'Perkalian', soal: 'A = [1 2; 3 4], B = [2 0; 1 3]. A × B = ...', pilihan: ['[4 6; 10 12]','[3 7; 8 11]','[5 4; 9 10]','[2 4; 3 12]'], jawaban: 0, penjelasan: '(1 · 2+2 · 1)=4, (1 · 0+2 · 3)=6, (3 · 2+4 · 1)=10, (3 · 0+4 · 3)=12.' },
+        { topik: 'Perkalian', soal: 'A = [2 1; 0 3], B = [1 4; 2 1]. A × B = ...', pilihan: ['[4 9; 6 3]','[3 5; 2 1]','[2 4; 0 3]','[4 9; 2 1]'], jawaban: 0, penjelasan: '(2 · 1+1 · 2)=4, (2 · 4+1 · 1)=9, (0 · 1+3 · 2)=6, (0 · 4+3 · 1)=3.' },
+        { topik: 'Perkalian', soal: 'I = [1 0; 0 1], A = [3 5; 7 9]. I × A = ...', pilihan: ['[3 5; 7 9]','[1 0; 0 1]','[0 0; 0 0]','[3 5; 0 9]'], jawaban: 0, penjelasan: 'Identitas × A = A.' },
+        { topik: 'Perkalian', soal: 'A = [1 0; 0 1] adalah matriks...', pilihan: ['Identitas','Nol','Singular','Diagonal'], jawaban: 0, penjelasan: 'Matriks identitas 2×2.' },
+        { topik: 'Perkalian', soal: 'A = [2 3; 1 2], B = [1 0; 0 1]. A × B = ...', pilihan: ['[2 3; 1 2]','[1 0; 0 1]','[2 0; 0 2]','[0 0; 0 0]'], jawaban: 0, penjelasan: 'A × I = A.' },
+        { topik: 'Determinan', soal: 'det [3 1; 4 2] = ...', pilihan: ['2','6','8','10'], jawaban: 0, penjelasan: '(3 · 2)-(1 · 4)=2.' },
+        { topik: 'Determinan', soal: 'det [5 2; 3 1] = ...', pilihan: ['-1','1','5','11'], jawaban: 0, penjelasan: '(5 · 1)-(2 · 3) = -1.' },
+        { topik: 'Determinan', soal: 'det [2 0; 0 3] = ...', pilihan: ['6','5','4','3'], jawaban: 0, penjelasan: '(2 · 3)-(0 · 0)=6.' },
+        { topik: 'Determinan', soal: 'det [1 2; 3 4] = ...', pilihan: ['-2','2','4','10'], jawaban: 0, penjelasan: '(1 · 4)-(2 · 3) = -2.' },
+        { topik: 'Determinan', soal: 'Jika det [x 2; 3 4] = 4, maka x = ...', pilihan: ['2.5','3','4','5'], jawaban: 0, penjelasan: '4x - 6 = 4 → x = 2.5.' }
+    ],
+    3: [
+        { topik: 'Invers', soal: 'Invers dari [4 1; 2 1] adalah...', pilihan: ['[0.5 -0.5; -1 2]','[0.5 0.5; 1 2]','[-0.5 0.5; 1 -2]','[1 1; 2 4]'], jawaban: 0, penjelasan: 'det=2, 1/2 × [1 -1; -2 4] = [0.5 -0.5; -1 2].' },
+        { topik: 'Invers', soal: 'Matriks tanpa invers disebut...', pilihan: ['Singular','Non-singular','Identitas','Diagonal'], jawaban: 0, penjelasan: 'det = 0 → singular.' },
+        { topik: 'Invers', soal: 'Invers dari [2 0; 0 2] = ...', pilihan: ['[0.5 0; 0 0.5]','[1 0; 0 1]','[0.25 0; 0 0.25]','[2 0; 0 2]'], jawaban: 0, penjelasan: '1/2 × [2 0; 0 2] = [0.5 0; 0 0.5].' },
+        { topik: 'Invers', soal: 'A = [1 0; 0 1], F = [3 4; 5 6]. A × F = ...', pilihan: ['[3 4; 5 6]','[1 0; 0 1]','[4 5; 6 7]','[0 0; 0 0]'], jawaban: 0, penjelasan: 'I × F = F.' },
+        { topik: 'Invers', soal: 'Syarat matriks punya invers adalah...', pilihan: ['det ≠ 0','det = 0','ordo sama','semua elemen positif'], jawaban: 0, penjelasan: 'det ≠ 0.' },
+        { topik: 'Invers', soal: 'Invers dari [1 2; 0 1] adalah...', pilihan: ['[1 -2; 0 1]','[1 2; 0 1]','[0 1; 1 2]','[-1 2; 0 -1]'], jawaban: 0, penjelasan: 'det=1, [1 -2; 0 1].' },
+        { topik: 'Invers', soal: 'A × A⁻¹ = ...', pilihan: ['I (identitas)','A','0','A²'], jawaban: 0, penjelasan: 'A × A⁻¹ = I.' },
+        { topik: 'Invers', soal: 'Invers dari [3 0; 0 3] = ...', pilihan: ['[1/3 0; 0 1/3]','[3 0; 0 3]','[1 0; 0 1]','[0 0; 0 0]'], jawaban: 0, penjelasan: '1/3 × [3 0; 0 3].' },
+        { topik: 'Transpose', soal: 'Transpose dari [1 2 3; 4 5 6] = ...', pilihan: ['[1 4; 2 5; 3 6]','[1 2 3; 4 5 6]','[4 5 6; 1 2 3]','[6 5 4; 3 2 1]'], jawaban: 0, penjelasan: 'Baris → kolom.' },
+        { topik: 'Transpose', soal: 'G = [3 4; 5 6]. Gᵀ = ...', pilihan: ['[3 5; 4 6]','[3 4; 5 6]','[5 6; 3 4]','[4 3; 6 5]'], jawaban: 0, penjelasan: 'Tukar baris dan kolom.' },
+        { topik: 'Transpose', soal: 'Transpose dari [a b; c d] = ...', pilihan: ['[a c; b d]','[a b; c d]','[b a; d c]','[d c; b a]'], jawaban: 0, penjelasan: 'Tukar posisi.' },
+        { topik: 'Transpose', soal: 'A = [2 1; 3 4]. (Aᵀ)ᵀ = ...', pilihan: ['[2 1; 3 4]','[2 3; 1 4]','[1 2; 4 3]','[3 1; 4 2]'], jawaban: 0, penjelasan: 'Kembali ke A.' },
+        { topik: 'Transpose', soal: 'Jika A = Aᵀ, matriks disebut...', pilihan: ['Simetris','Antisimetris','Diagonal','Skalar'], jawaban: 0, penjelasan: 'Matriks simetris.' },
+        { topik: 'Transpose', soal: 'Transpose [5] = ...', pilihan: ['[5]','[0]','[1]','[25]'], jawaban: 0, penjelasan: 'Matriks 1×1.' },
+        { topik: 'Transpose', soal: 'Ordo [1 2 3] adalah 1×3. Transposenya berordo...', pilihan: ['3×1','1×3','3×3','1×1'], jawaban: 0, penjelasan: 'Transpose 1×3 = 3×1.' }
+    ]
+};
+
+/* ============================================================
+   SOAL LATIHAN MATERI
+   ============================================================ */
+const soalLatihanMateri = {
+    1: [
+        { topik: 'Ordo', soal: 'Matriks [1 2 3; 4 5 6] memiliki ordo...', pilihan: ['2×3','3×2','2×2','3×3'], jawaban: 0, penjelasan: '2 baris, 3 kolom → 2×3.' },
+        { topik: 'Ordo', soal: 'Matriks 3×4 punya berapa elemen?', pilihan: ['12','7','9','16'], jawaban: 0, penjelasan: '3 × 4 = 12.' },
+        { topik: 'Ordo', soal: 'Elemen a₂₂ dari [1 2; 3 4] adalah...', pilihan: ['4','3','2','1'], jawaban: 0, penjelasan: 'Baris 2, kolom 2 = 4.' },
+        { topik: 'Ordo', soal: 'Matriks [5 7; 1 3] berordo...', pilihan: ['2×2','2×3','3×2','3×3'], jawaban: 0, penjelasan: '2×2.' },
+        { topik: 'Operasi', soal: 'Hasil dari [1 2; 3 4] + [5 6; 7 8] = ...', pilihan: ['[6 8; 10 12]','[4 4; 4 4]','[5 12; 21 32]','[1 2; 3 4]'], jawaban: 0, penjelasan: 'Jumlah seletak.' },
+        { topik: 'Operasi', soal: 'Hasil dari [5 3; 2 4] - [2 1; 3 2] = ...', pilihan: ['[3 2; -1 2]','[7 4; 5 6]','[3 2; 1 2]','[1 1; 1 1]'], jawaban: 0, penjelasan: '[5-2 3-1; 2-3 4-2].' },
+        { topik: 'Operasi', soal: 'Hasil dari [2 4; 3 1] + [1 2; 0 5] = ...', pilihan: ['[3 6; 3 6]','[4 6; 3 7]','[3 5; 4 6]','[1 2; 0 5]'], jawaban: 0, penjelasan: 'Jumlahkan.' },
+        { topik: 'Operasi', soal: 'Hasil dari [6 5; 4 3] - [1 2; 3 4] = ...', pilihan: ['[5 3; 1 -1]','[7 7; 7 7]','[5 3; 1 1]','[6 5; 4 3]'], jawaban: 0, penjelasan: '[6-1 5-2; 4-3 3-4].' },
+        { topik: 'Operasi', soal: 'Jika A = [1 2; 3 4], maka A + A = ...', pilihan: ['[2 4; 6 8]','[1 2; 3 4]','[0 0; 0 0]','[4 2; 6 4]'], jawaban: 0, penjelasan: 'A + A = 2A.' },
+        { topik: 'Operasi', soal: 'Hasil dari [-1 4 3; -4 5 -6] - [0 -2 -1; 2 7 -8] = ...', pilihan: ['[-1 6 4; -6 -2 2]','[-1 6 4; -6 -2 -2]','[-1 6 4; -6 2 2]','[-1 -6 4; -6 -2 2]'], jawaban: 0, penjelasan: 'Kurangkan elemen seletak.' }
+    ],
+    2: [
+        { topik: 'Skalar', soal: 'Tentukan hasil perkalian sklar dari 3 × [1 2; 3 4] = ...', pilihan: ['[3 6; 9 12]','[1 2; 3 4]','[4 5; 6 7]','[3 2; 1 4]'], jawaban: 0, penjelasan: '×3 tiap elemen.' },
+        { topik: 'Skalar', soal: 'Tentukan hasil perkalian sklar dari 2 × [5 6; 7 8] = ...', pilihan: ['[10 12; 14 16]','[7 8; 9 10]','[5 6; 7 8]','[25 36; 49 64]'], jawaban: 0, penjelasan: '×2.' },
+        { topik: 'Perkalian', soal: 'Tentukan hasil perkalian dua matriks [1 2; 3 4] × [2 0; 1 3] = ...', pilihan: ['[4 6; 10 12]','[3 7; 8 11]','[5 4; 9 10]','[2 4; 3 12]'], jawaban: 0, penjelasan: 'Baris × kolom.' },
+        { topik: 'Perkalian', soal: 'Tentukan hasil perkalian dua matriks [2 1; 0 3] × [1 4; 2 1] = ...', pilihan: ['[4 9; 6 3]','[3 5; 2 1]','[2 4; 0 3]','[4 9; 2 1]'], jawaban: 0, penjelasan: 'Kalikan.' },
+        { topik: 'Perkalian', soal: 'Tentukan hasil perkalian dua matriks [3 0; 0 3] × [1 1; 1 1] = ...', pilihan: ['[3 3; 3 3]','[4 4; 4 4]','[1 1; 1 1]','[9 9; 9 9]'], jawaban: 0, penjelasan: '3 × [1 1; 1 1].' },
+        { topik: 'Determinan', soal: 'Tentukan nilai dari det [3 1; 4 2] = ...', pilihan: ['2','6','8','10'], jawaban: 0, penjelasan: '3 · 2 - 1 · 4 = 2.' },
+        { topik: 'Determinan', soal: 'Tentukan nilai dari det [5 2; 3 1] = ...', pilihan: ['-1','1','5','11'], jawaban: 0, penjelasan: '5 · 1 - 2 · 3 = -1.' },
+        { topik: 'Determinan', soal: 'Tentukan nilai dari det [2 0; 0 3] = ...', pilihan: ['6','5','4','3'], jawaban: 0, penjelasan: '2 · 3 - 0 · 0 = 6.' },
+        { topik: 'Determinan', soal: 'Tentukan nilai dari det [1 2; 3 4] = ...', pilihan: ['-2','2','4','10'], jawaban: 0, penjelasan: '1 · 4 - 2 · 3 = -2.' },
+        { topik: 'Determinan', soal: 'Jika det [x 2; 3 4] = 4, maka nilai x = ...', pilihan: ['2.5','3','4','5'], jawaban: 0, penjelasan: '4x - 6 = 4 → x = 2.5.' }
+    ],
+    3: [
+        { topik: 'Invers', soal: 'Invers dari [4 1; 2 1] = ...', pilihan: ['[0.5 -0.5; -1 2]','[0.5 0.5; 1 2]','[-0.5 0.5; 1 -2]','[1 1; 2 4]'], jawaban: 0, penjelasan: 'det=2.' },
+        { topik: 'Invers', soal: 'Matriks singular artinya...', pilihan: ['det = 0','det ≠ 0','matriks nol','matriks identitas'], jawaban: 0, penjelasan: 'det = 0.' },
+        { topik: 'Invers', soal: 'Invers dari [2 0; 0 2] = ...', pilihan: ['[0.5 0; 0 0.5]','[1 0; 0 1]','[0.25 0; 0 0.25]','[2 0; 0 2]'], jawaban: 0, penjelasan: '1/2 × A.' },
+        { topik: 'Invers', soal: 'A × A⁻¹ = ...', pilihan: ['I','A','0','A²'], jawaban: 0, penjelasan: 'Identitas.' },
+        { topik: 'Invers', soal: 'Invers dari [1 0; 0 1] = ...', pilihan: ['[1 0; 0 1]','[0 1; 1 0]','[0 0; 0 0]','[-1 0; 0 -1]'], jawaban: 0, penjelasan: 'I⁻¹ = I.' },
+        { topik: 'Invers', soal: 'Syarat matriks 2×2 punya invers...', pilihan: ['det ≠ 0','det = 0','semua elemen sama','ordo ganjil'], jawaban: 0, penjelasan: 'det ≠ 0.' },
+        { topik: 'Transpose', soal: 'Transpose [1 2 3; 4 5 6] = ...', pilihan: ['[1 4; 2 5; 3 6]','[1 2 3; 4 5 6]','[4 5 6; 1 2 3]','[6 5 4; 3 2 1]'], jawaban: 0, penjelasan: 'Baris → kolom.' },
+        { topik: 'Transpose', soal: 'Transpose [3 4; 5 6] = ...', pilihan: ['[3 5; 4 6]','[3 4; 5 6]','[5 6; 3 4]','[4 3; 6 5]'], jawaban: 0, penjelasan: 'Tukar.' },
+        { topik: 'Transpose', soal: 'Transpose [a b; c d] = ...', pilihan: ['[a c; b d]','[a b; c d]','[b a; d c]','[d c; b a]'], jawaban: 0, penjelasan: 'Tukar baris-kolom.' },
+        { topik: 'Transpose', soal: 'Jika A = [2 1; 3 4], (Aᵀ)ᵀ = ...', pilihan: ['[2 1; 3 4]','[2 3; 1 4]','[1 2; 4 3]','[3 1; 4 2]'], jawaban: 0, penjelasan: 'Kembali ke A.' }
+    ]
+};
+
+/* ============================================================
+   STORAGE
+   ============================================================ */
+const STORAGE_KEY = 'matriks_app_v8';
+function loadStore() {
+    try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) {
+            const p = JSON.parse(raw);
+            if (!p.bankSoal) p.bankSoal = JSON.parse(JSON.stringify(defaultBankSoal));
+            if (!p.tokensPertemuan) p.tokensPertemuan = { 1: 'MTX001', 2: 'MTX002', 3: 'MTX003' };
+            if (!p.avatars) p.avatars = {};
+            if (!p.pesertaSudahIkut) p.pesertaSudahIkut = {};
+            return p;
+        }
+    } catch(e) {}
+    return {
+        pertemuan: { 1: true, 2: true, 3: false },
+        bankSoal: JSON.parse(JSON.stringify(defaultBankSoal)),
+        tokensPertemuan: { 1: 'MTX001', 2: 'MTX002', 3: 'MTX003' },
+        avatars: {},
+        pesertaSudahIkut: {}
+    };
+}
+function saveStore(data) { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch(e) {} }
+let store = loadStore();
+
+/* ============================================================
+   REALTIME
+   ============================================================ */
+const RealtimeAdapter = {
+    broadcast(type, payload) {
+        try { const ch = new BroadcastChannel('matriks_rt'); ch.postMessage({ type, payload, ts: Date.now() }); ch.close(); } catch(e) {}
+    },
+    listen(handler) {
+        try { const ch = new BroadcastChannel('matriks_rt'); ch.onmessage = (ev) => handler(ev.data); } catch(e) {}
+    }
+};
+
+/* ============================================================
+   STATE
+   ============================================================ */
+let currentUser = null;
+let currentPertemuan = 1;
+let currentTokenData = null;
+let selectedAvatarTemp = null;
+let openAccordionIdx = null;
+
+/* ============================================================
+   PAGE REFERENCES
+   ============================================================ */
+const pages = {
+    login: document.getElementById('loginPage'),
+    siswaDash: document.getElementById('siswaDashboard'),
+    adminDash: document.getElementById('adminDashboard'),
+    materi: document.getElementById('materiPage'),
+    lobby: document.getElementById('lobbyPage'),
+    quiz: document.getElementById('quizPage')
+};
+const headerAdmin = document.getElementById('headerAdmin');
+const headerSiswa = document.getElementById('headerSiswa');
+
+function showOnly(key) {
+    Object.values(pages).forEach(p => p && p.classList.add('hidden'));
+    pages[key].classList.remove('hidden');
+    headerAdmin.classList.add('hidden');
+    headerSiswa.classList.add('hidden');
+    const bodyEl = document.getElementById('bodyMain');
+    bodyEl.classList.remove('role-admin', 'role-siswa');
+    if (key === 'adminDash') {
+        headerAdmin.classList.remove('hidden');
+        bodyEl.classList.add('role-admin');
+    } else if (key !== 'login') {
+        headerSiswa.classList.remove('hidden');
+        bodyEl.classList.add('role-siswa');
+    }
+    window.scrollTo({ top: 0, behavior: 'instant' });
+}
+
+/* ============================================================
+   LOGIN
+   ============================================================ */
+function login() {
+    const nisn = document.getElementById('nisnInput').value.trim();
+    const err = document.getElementById('loginError');
+    err.textContent = '';
+    if (!nisn) { err.textContent = '⚠️ NISN harus diisi!'; return; }
+
+    if (nisn.toLowerCase() === 'admin') {
+        currentUser = { nisn: 'admin', nama: 'Muhammad Fahmi Abdillah', role: 'admin' };
+        showOnly('adminDash');
+        renderAdminDashboard();
+        return;
+    }
+
+    const siswa = dataSiswa[nisn];
+    if (!siswa) { err.textContent = '❌ NISN tidak terdaftar!'; return; }
+
+    currentUser = { nisn, nama: siswa.nama, role: 'siswa' };
+    document.getElementById('headerSiswaNama').textContent = siswa.nama;
+    document.getElementById('headerSiswaSub').textContent = `🎓 Siswa • NISN: ${nisn}`;
+    updateAllAvatars();
+    showOnly('siswaDash');
+}
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !pages.login.classList.contains('hidden')) login();
+});
+
+/* ============================================================
+   KELUAR — dengan konfirmasi progress hilang jika di kuis
+   ============================================================ */
+function keluar() {
+    const isInQuiz = currentUser && currentUser.role === 'siswa' &&
+                     !document.getElementById('quizPage').classList.contains('hidden') &&
+                     !quizEnded;
+    const pesan = isInQuiz
+        ? 'Yakin ingin keluar? Progress kuis akan hilang.'
+        : 'Yakin ingin keluar? Progress akan hilang.';
+    if (!confirm(pesan)) return;
+    stopTimer(); stopGamesSound();
+    currentUser = null; quizEnded = true;
+    showOnly('login');
+    document.getElementById('nisnInput').value = '';
+    document.getElementById('loginError').textContent = '';
+}
+function kembaliKeDashboard() {
+    stopTimer(); stopGamesSound(); quizEnded = true;
+    if (currentUser && currentUser.role === 'admin') { showOnly('adminDash'); renderAdminDashboard(); }
+    else showOnly('siswaDash');
+}
+
+/* ============================================================
+   AVATAR
+   ============================================================ */
+function getAvatarPath(n) { return AVATAR_CONFIG.folder + 'avatar' + n + AVATAR_CONFIG.extension; }
+function getCurrentAvatarNum() { return currentUser ? (store.avatars[currentUser.nisn] || null) : null; }
+function updateAllAvatars() {
+    const num = getCurrentAvatarNum();
+    const initial = currentUser ? currentUser.nama.charAt(0).toUpperCase() : '?';
+    const hInit = document.getElementById('headerAvatarInitial');
+    const hImg = document.getElementById('headerAvatarImg');
+    if (num) {
+        hImg.src = getAvatarPath(num);
+        hImg.style.display = 'block'; hInit.style.display = 'none';
+        hImg.onerror = () => { hImg.style.display = 'none'; hInit.style.display = 'block'; hInit.textContent = initial; };
+    } else {
+        hImg.style.display = 'none'; hInit.style.display = 'block'; hInit.textContent = initial;
+    }
+}
+function openAvatarModal() {
+    if (!currentUser || currentUser.role !== 'siswa') return;
+    selectedAvatarTemp = getCurrentAvatarNum();
+    const grid = document.getElementById('avatarGrid');
+    const initial = currentUser.nama.charAt(0).toUpperCase();
+    let html = '';
+    for (let i = 1; i <= AVATAR_CONFIG.total; i++) {
+        const sel = selectedAvatarTemp === i ? ' selected' : '';
+        html += `<div class="avatar-option${sel}" data-avatar="${i}" onclick="selectAvatarOption(${i})">
+            <img src="${getAvatarPath(i)}" alt="A${i}" onerror="this.outerHTML='<span class=&quot;fallback-init&quot;>${initial}</span>'" />
+        </div>`;
+    }
+    grid.innerHTML = html;
+    document.getElementById('avatarModal').classList.add('active');
+}
+function closeAvatarModal() { document.getElementById('avatarModal').classList.remove('active'); }
+function selectAvatarOption(n) {
+    selectedAvatarTemp = n;
+    document.querySelectorAll('#avatarGrid .avatar-option').forEach(el => {
+        el.classList.toggle('selected', parseInt(el.dataset.avatar) === n);
+    });
+}
+function saveAvatarChoice() {
+    if (!currentUser) return;
+    if (selectedAvatarTemp) store.avatars[currentUser.nisn] = selectedAvatarTemp;
+    else delete store.avatars[currentUser.nisn];
+    saveStore(store);
+    updateAllAvatars();
+    closeAvatarModal();
+    showToast('✅ Avatar disimpan!', 'success');
+}
+document.getElementById('avatarModal').addEventListener('click', (e) => {
+    if (e.target.id === 'avatarModal') closeAvatarModal();
+});
+
+/* ============================================================
+   ADMIN TABS
+   ============================================================ */
+function switchAdminTab(tab) {
+    document.querySelectorAll('.admin-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
+    document.querySelectorAll('.admin-tab-content').forEach(c => c.classList.toggle('active', c.id === 'tab-' + tab));
+}
+
+/* ============================================================
+   ADMIN DASHBOARD
+   ============================================================ */
+function renderAdminDashboard() {
+    document.getElementById('adminPertemuanList').innerHTML = [1,2,3].map(p => {
+        const open = store.pertemuan[p];
+        return `<div class="admin-row">
+            <span class="label">Pertemuan ${p}</span>
+            <span class="status ${open ? 'open' : 'locked'}">${open ? '🔓 Terbuka' : '🔒 Terkunci'}</span>
+            <div class="actions">
+                ${open 
+                    ? `<button class="btn-sm lock-btn" onclick="adminTogglePertemuan(${p}, false)">Kunci</button>`
+                    : `<button class="btn-sm open-btn" onclick="adminTogglePertemuan(${p}, true)">Buka</button>`}
+            </div>
+        </div>`;
+    }).join('');
+
+    renderAccordionBankSoal();
+    renderPesertaList();
+}
+
+function adminTogglePertemuan(p, open) {
+    store.pertemuan[p] = open; saveStore(store); renderAdminDashboard();
+    showToast(open ? `Pertemuan ${p} dibuka.` : `Pertemuan ${p} dikunci.`, open ? 'success' : 'info');
+}
+
+/* ============================================================
+   ACCORDION BANK SOAL
+   ============================================================ */
+function renderAccordionBankSoal() {
+    const wrap = document.getElementById('accordionBankSoal');
+    wrap.innerHTML = [1,2,3].map(p => {
+        const open = openAccordionIdx === p;
+        const token = store.tokensPertemuan[p] || '';
+        const jumlah = (store.bankSoal[p] || []).length;
+        return `
+        <div class="accordion-item ${open ? 'open' : ''}" id="acc-${p}">
+            <div class="accordion-header" onclick="toggleAccordion(${p})">
+                <div class="accordion-title">
+                    <i class="fas fa-chevron-right chevron"></i>
+                    <span>Pertemuan ${p}</span>
+                    <span style="color:#9090a0;font-weight:500;font-size:0.8rem;">(${jumlah} soal)</span>
+                </div>
+                <div class="accordion-token" onclick="event.stopPropagation()">
+                    <label>Token</label>
+                    <input type="text" id="token-${p}" value="${token}" 
+                           onblur="saveToken(${p})" 
+                           onkeydown="if(event.key==='Enter') this.blur()"
+                           onclick="this.select()" 
+                           maxlength="12" />
+                    <span class="token-saved" id="token-saved-${p}">✓</span>
+                    <button type="button" class="btn-sm save-btn" 
+                            onclick="simpanSemuaSoal(${p})" 
+                            title="Validasi & simpan semua soal di pertemuan ini">
+                        <i class="fas fa-save"></i> Simpan Semua
+                    </button>
+                    <button type="button" class="btn-sm start-btn" 
+                            onclick="mulaiKuis(${p})" 
+                            title="Validasi & siapkan kuis untuk pertemuan ini">
+                        <i class="fas fa-play"></i> Mulai Kuis
+                    </button>
+                </div>
+            </div>
+            <div class="accordion-body">
+                <div id="soalList-${p}">
+                    ${renderSoalList(p)}
+                </div>
+            </div>
+        </div>`;
+    }).join('');
+}
+
+function toggleAccordion(p) {
+    const wasOpen = openAccordionIdx === p;
+    openAccordionIdx = wasOpen ? null : p;
+    renderAccordionBankSoal();
+}
+
+function renderSoalList(p) {
+    const soalArr = store.bankSoal[p] || [];
+    if (!soalArr.length) {
+        return `<p style="color:#808090;text-align:center;padding:16px;">Belum ada soal di pertemuan ini.</p>`;
+    }
+    return soalArr.map((s, i) => {
+        const opts = s.pilihan.map((opt, j) => `
+            <div class="opsi-row">
+                <span class="opsi-lbl">${LABELS[j]}.</span>
+                <input type="text" value="${escapeHtml(opt)}" 
+                       oninput="editSoal(${p}, ${i}, 'pilihan', ${j}, this.value)"
+                       placeholder="Opsi ${LABELS[j]}" />
+            </div>
+        `).join('');
+        const kunciRadio = LABELS.map((lbl, j) => `
+            <label class="${s.jawaban === j ? 'checked' : ''}">
+                <input type="radio" name="kunci-${p}-${i}" value="${j}" ${s.jawaban === j ? 'checked' : ''}
+                       onchange="editSoal(${p}, ${i}, 'jawaban', null, ${j})" />
+                ${lbl}
+            </label>
+        `).join('');
+        return `
+        <div class="soal-edit-item">
+            <span class="soal-num">Soal ${i+1}</span>
+            <label>Pertanyaan</label>
+            <textarea rows="2" 
+                      oninput="editSoal(${p}, ${i}, 'soal', null, this.value)"
+                      placeholder="Tulis soal, gunakan [1 2; 3 4] untuk matriks">${escapeHtml(s.soal)}</textarea>
+
+            <label>Opsi Jawaban</label>
+            <div class="opsi-grid">${opts}</div>
+
+            <div class="kunci-row">
+                <span>Kunci:</span>
+                ${kunciRadio}
+            </div>
+
+            <div class="preview-header">
+                <label style="margin:0;">👁️ Preview Visual</label>
+                <div class="preview-actions">
+                    <button type="button" class="btn-sm" style="border-color:#4A9EFF;color:#4A9EFF;" onclick="refreshPreview(${p}, ${i})">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
+                </div>
+            </div>
+            <div class="preview-box" id="preview-${p}-${i}">
+                ${renderPreviewSoal(p, i)}
+            </div>
+        </div>`;
+    }).join('');
+}
+
+function renderPreviewSoal(p, i) {
+    const s = store.bankSoal[p][i];
+    if (!s) return '';
+    const opts = s.pilihan.map((opt, j) => 
+        `<div style="margin:4px 0;color:#d0d0e0;">
+            <strong style="color:#FFD700;">${LABELS[j]}.</strong> 
+            ${autoRenderMatrixNotation(opt)}
+        </div>`
+    ).join('');
+    return `
+        <div style="background:rgba(0,0,0,0.3);padding:14px 18px;border-radius:10px;border:1px solid rgba(255,215,0,0.2);">
+            <div style="color:#e8e8f0;margin-bottom:10px;font-weight:600;">
+                ${autoRenderMatrixNotation(s.soal)}
+            </div>
+            ${opts}
+        </div>
+    `;
+}
+
+function refreshPreview(p, i) {
+    const box = document.getElementById(`preview-${p}-${i}`);
+    if (box) {
+        box.innerHTML = renderPreviewSoal(p, i);
+        box.style.transition = 'box-shadow 0.3s';
+        box.style.boxShadow = '0 0 0 3px rgba(40, 167, 69, 0.5)';
+        setTimeout(() => { box.style.boxShadow = 'none'; }, 400);
+    }
+    showToast('🔄 Preview diperbarui', 'success', 1500);
+}
+
+function simpanSemuaSoal(p) {
+    const soalArr = store.bankSoal[p] || [];
+    if (!soalArr.length) {
+        showToast(`⚠️ Belum ada soal di Pertemuan ${p}.`, 'error');
+        return;
+    }
+    const masalah = [];
+    soalArr.forEach((s, i) => {
+        if (!s.soal || s.soal.trim() === '') {
+            masalah.push(`Soal ${i+1}: pertanyaan kosong`);
+        } else if (s.pilihan.filter(o => !o || o.trim() === '').length > 0) {
+            masalah.push(`Soal ${i+1}: ada opsi kosong`);
+        } else if (s.jawaban === undefined || s.jawaban < 0 || s.jawaban > 3) {
+            masalah.push(`Soal ${i+1}: kunci belum dipilih`);
+        }
+    });
+    if (masalah.length > 0) {
+        showToast(`⚠️ Ada ${masalah.length} masalah:<br>• ` + masalah.slice(0, 3).join('<br>• ') 
+                  + (masalah.length > 3 ? `<br>... dan ${masalah.length - 3} lainnya` : ''), 
+                  'error', 6000);
+        return;
+    }
+    saveStore(store);
+    soalArr.forEach((s, i) => {
+        const box = document.getElementById(`preview-${p}-${i}`);
+        if (box) box.innerHTML = renderPreviewSoal(p, i);
+    });
+    showToast(`✅ ${soalArr.length} soal Pertemuan ${p} tersimpan!`, 'success');
+}
+
+/* ============================================================
+   MULAI KUIS
+   ============================================================ */
+function mulaiKuis(p) {
+    const soalArr = store.bankSoal[p] || [];
+    const token = store.tokensPertemuan[p];
+
+    if (!token || token.trim() === '') {
+        showToast('⚠️ Token belum diisi. Isi token dulu sebelum mulai kuis.', 'error', 5000);
+        return;
+    }
+    if (!soalArr.length) {
+        showToast(`⚠️ Belum ada soal di Pertemuan ${p}.`, 'error');
+        return;
+    }
+    const masalah = [];
+    soalArr.forEach((s, i) => {
+        if (!s.soal || s.soal.trim() === '') {
+            masalah.push(`Soal ${i+1}: pertanyaan kosong`);
+        } else if (s.pilihan.filter(o => !o || o.trim() === '').length > 0) {
+            masalah.push(`Soal ${i+1}: ada opsi kosong`);
+        } else if (s.jawaban === undefined || s.jawaban < 0 || s.jawaban > 3) {
+            masalah.push(`Soal ${i+1}: kunci belum dipilih`);
+        }
+    });
+    if (masalah.length > 0) {
+        showToast(
+            `⚠️ Tidak bisa mulai kuis. Ada ${masalah.length} masalah:<br>• ` +
+            masalah.slice(0, 3).join('<br>• ') +
+            (masalah.length > 3 ? `<br>... dan ${masalah.length - 3} lainnya` : ''),
+            'error', 6000
+        );
+        return;
+    }
+    if (!store.pertemuan[p]) {
+        showToast(
+            `⚠️ Pertemuan ${p} masih terkunci. Buka dulu di tab "Pertemuan".`,
+            'error', 5000
+        );
+        return;
+    }
+    saveStore(store);
+    RealtimeAdapter.broadcast('START_QUIZ', { token: token, pertemuan: p });
+
+    showToast(
+        `✅ <strong>Kuis Pertemuan ${p} siap dimulai!</strong><br><br>` +
+        `🔑 Token: <strong style="color:#FFD700;letter-spacing:1px;font-size:1.1em;">${token}</strong><br>` +
+        `📝 Jumlah soal: <strong>${soalArr.length}</strong><br><br>` +
+        `📌 <strong>Bagi token ini ke siswa.</strong> Setelah mereka masukkan token di menu "Kuis", mereka langsung bisa mengerjakan.`,
+        'success', 10000
+    );
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function escapeHtml(s) {
+    if (s == null) return '';
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+function editSoal(p, idx, field, subIdx, value) {
+    if (!store.bankSoal[p] || !store.bankSoal[p][idx]) return;
+    const s = store.bankSoal[p][idx];
+    if (field === 'pilihan') s.pilihan[subIdx] = value;
+    else if (field === 'soal') s.soal = value;
+    else if (field === 'topik') s.topik = value;
+    else if (field === 'jawaban') {
+        s.jawaban = parseInt(value);
+        document.querySelectorAll(`input[name="kunci-${p}-${idx}"]`).forEach(r => {
+            r.parentElement.classList.toggle('checked', parseInt(r.value) === s.jawaban);
+        });
+    }
+    saveStore(store);
+}
+
+function saveToken(p) {
+    const inp = document.getElementById('token-' + p);
+    if (!inp) return;
+    let val = inp.value.trim().toUpperCase();
+    if (!val) {
+        inp.value = store.tokensPertemuan[p] || '';
+        return;
+    }
+    for (let q = 1; q <= 3; q++) {
+        if (q !== p && store.tokensPertemuan[q] === val) {
+            showToast(`⚠️ Token ${val} sudah dipakai Pertemuan ${q}.`, 'error');
+            inp.value = store.tokensPertemuan[p] || '';
+            return;
+        }
+    }
+    store.tokensPertemuan[p] = val;
+    saveStore(store);
+    const badge = document.getElementById('token-saved-' + p);
+    if (badge) { badge.classList.add('show'); setTimeout(() => badge.classList.remove('show'), 1500); }
+    showToast(`✅ Token Pertemuan ${p} disimpan: ${val}`, 'success', 2000);
+}
+
+/* ============================================================
+   TAB PESERTA
+   ============================================================ */
+function renderPesertaList() {
+    const wrap = document.getElementById('adminPesertaList');
+    const entries = Object.entries(dataSiswa);
+    if (!entries.length) { wrap.innerHTML = '<p style="color:#808090;">Tidak ada siswa terdaftar.</p>'; return; }
+    wrap.innerHTML = entries.map(([nisn, s]) => {
+        const sudah = store.pesertaSudahIkut[nisn];
+        return `<div class="peserta-item">
+            <div class="peserta-info">
+                <div class="peserta-nama">${escapeHtml(s.nama)}</div>
+                <div class="peserta-nisn">NISN: ${nisn}</div>
+            </div>
+            <div class="peserta-status ${sudah ? 'sudah' : 'belum'}">
+                ${sudah ? '✅ Sudah ikut kuis' : '⏳ Belum ikut kuis'}
+            </div>
+        </div>`;
+    }).join('');
+}
+
+/* ============================================================
+   SISWA: JOIN TOKEN
+   ============================================================ */
+function bukaTokenModal() {
+    document.getElementById('tokenModal').classList.add('active');
+    document.getElementById('tokenInput').value = '';
+    document.getElementById('tokenError').textContent = '';
+}
+function closeTokenModal() {
+    document.getElementById('tokenModal').classList.remove('active');
+}
+
+function siswaJoinToken() {
+    const token = document.getElementById('tokenInput').value.trim().toUpperCase();
+    const err = document.getElementById('tokenError');
+    err.textContent = '';
+    if (!token) { err.textContent = '⚠️ Token harus diisi!'; return; }
+
+    let pertemuan = null;
+    for (let p = 1; p <= 3; p++) {
+        if (store.tokensPertemuan[p] === token) { pertemuan = p; break; }
+    }
+    if (!pertemuan) { err.textContent = '❌ Token tidak ditemukan!'; return; }
+
+    const soalArr = store.bankSoal[pertemuan] || [];
+    if (soalArr.length === 0) { err.textContent = '⚠️ Belum ada soal untuk kuis ini.'; return; }
+
+    currentTokenData = {
+        token: token,
+        pertemuan: pertemuan,
+        nama: `Kuis Matriks Pertemuan ${pertemuan}`,
+        jumlahSoal: soalArr.length,
+        waktu: 20,
+        peserta: currentTokenData?.peserta || []
+    };
+
+    document.getElementById('lobbyToken').textContent = token;
+    document.getElementById('lobbyNamaKuis').textContent = currentTokenData.nama;
+    document.getElementById('lobbyJumlahSoal').textContent = currentTokenData.jumlahSoal;
+    document.getElementById('lobbyWaktu').textContent = currentTokenData.waktu;
+
+    if (!currentTokenData.peserta.find(x => x.nisn === currentUser.nisn)) {
+        currentTokenData.peserta.push({ nisn: currentUser.nisn, nama: currentUser.nama });
+        RealtimeAdapter.broadcast('JOIN', { token, nisn: currentUser.nisn, nama: currentUser.nama });
+    }
+    document.getElementById('tokenModal').classList.remove('active');
+    renderLobbyPeserta();
+    showOnly('lobby');
+}
+
+function renderLobbyPeserta() {
+    const ul = document.getElementById('lobbyPesertaList');
+    if (!currentTokenData) return;
+    if (!currentTokenData.peserta.length) ul.innerHTML = '<li style="color:#808090;">Belum ada peserta.</li>';
+    else ul.innerHTML = currentTokenData.peserta.map(p => `<li><i class="fas fa-user-check"></i> ${p.nama} <small style="color:#9090a0;">(${p.nisn})</small></li>`).join('');
+    document.getElementById('lobbyAdminControls').style.display = 'none';
+    document.getElementById('lobbyWaitMsg').textContent = 'Menunggu kuis dimulai...';
+}
+function keluarLobby() { kembaliKeDashboard(); }
+
+/* ============================================================
+   KUIS
+   ============================================================ */
+let soalKuis = [], currentIndex = 0, skor = 0, sudahMenjawab = false, quizEnded = true;
+let timerInterval = null, timeLeft = 0, shieldTimer = null, shieldActive = false;
+let doublePointUsed = 0, fiftyFiftyUsed = 0, timeAttackUsed = 0, shieldUsed = 0, addTimeUsed = 0;
+let jawabanHistory = [];
+const MAX_DOUBLE = 2, MAX_5050 = 1, MAX_TIME_ATTACK = 1, MAX_SHIELD = 1, MAX_ADD_TIME = 1;
+
+function getSoalByPertemuan(p, jumlah) {
+    let pool = [...(store.bankSoal[p] || [])];
+    for (let i = pool.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [pool[i], pool[j]] = [pool[j], pool[i]];
+    }
+    let chosen = [];
+    if (pool.length >= jumlah) chosen = pool.slice(0, jumlah);
+    else { while (chosen.length > 0 && chosen.length < jumlah) chosen.push(...pool); chosen = chosen.slice(0, jumlah); }
+    return chosen.map(s => {
+        const idx = s.pilihan.map((p, i) => ({ p, i }));
+        for (let i = idx.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [idx[i], idx[j]] = [idx[j], idx[i]];
+        }
+        return { ...s, pilihan: idx.map(x => x.p), jawaban: idx.findIndex(x => x.i === s.jawaban) };
+    });
+}
+
+function startKuis() {
+    if (!currentTokenData) { showToast('Token tidak valid.', 'error'); return; }
+    const jumlah = Math.min(currentTokenData.jumlahSoal, (store.bankSoal[currentTokenData.pertemuan] || []).length);
+    soalKuis = getSoalByPertemuan(currentTokenData.pertemuan, jumlah);
+    currentIndex = 0; skor = 0; sudahMenjawab = false; quizEnded = false;
+    timeLeft = currentTokenData.waktu * 60; jawabanHistory = [];
+    doublePointUsed = 0; fiftyFiftyUsed = 0; timeAttackUsed = 0; shieldUsed = 0; addTimeUsed = 0;
+    shieldActive = false;
+    if (shieldTimer) { clearInterval(shieldTimer); shieldTimer = null; }
+    document.getElementById('shieldStatus').textContent = '';
+
+    showOnly('quiz');
+    document.getElementById('displayToken').textContent = currentTokenData.token;
+    document.getElementById('skorTampil').textContent = '0';
+
+    document.querySelector('.soal-container').style.display = '';
+    document.getElementById('btnNext').style.display = '';
+    document.querySelector('.powerup-bar').style.display = '';
+    document.getElementById('leaderboardLive').style.display = '';
+    document.getElementById('hasilAkhir').style.display = 'none';
+    document.getElementById('pembahasanBox').style.display = 'none';
+
+    updateTimerDisplay();
+    document.getElementById('timerBox').classList.remove('warning');
+    updatePowerupUI();
+    startTimer();
+    loadSoal(0);
+    playGamesSound();
+    renderLeaderboard();
+}
+
+function startTimer() {
+    if (timerInterval) clearInterval(timerInterval);
+    timerInterval = setInterval(() => {
+        timeLeft--; updateTimerDisplay();
+        if (timeLeft <= 60) document.getElementById('timerBox').classList.add('warning');
+        if (timeLeft <= 0) {
+            clearInterval(timerInterval); timerInterval = null;
+            if (!quizEnded) { quizEnded = true; tampilkanHasil(); }
+        }
+    }, 1000);
+}
+function updateTimerDisplay() {
+    const m = Math.floor(Math.max(0, timeLeft) / 60);
+    const s = Math.max(0, timeLeft) % 60;
+    document.getElementById('timerDisplay').textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+}
+function stopTimer() { if (timerInterval) { clearInterval(timerInterval); timerInterval = null; } }
+
+function loadSoal(index) {
+    if (quizEnded) return;
+    const data = soalKuis[index]; if (!data) return;
+    sudahMenjawab = false;
+    document.getElementById('btnNext').disabled = true;
+    const fb = document.getElementById('feedbackArea');
+    fb.style.display = 'none'; fb.className = ''; fb.innerHTML = '';
+    document.getElementById('soalNomor').innerHTML = `Soal ${index+1} dari ${soalKuis.length} <span class="topic-tag">${data.topik}</span>`;
+    document.getElementById('soalText').innerHTML = autoRenderMatrixNotation(data.soal);
+    document.getElementById('progressBar').style.width = ((index / soalKuis.length) * 100) + '%';
+    document.getElementById('progressText').textContent = `${index} / ${soalKuis.length}`;
+
+    const pc = document.getElementById('pilihanContainer');
+    pc.innerHTML = '';
+    data.pilihan.forEach((p, i) => {
+        const btn = document.createElement('button');
+        btn.innerHTML = `${LABELS[i]}. ${autoRenderMatrixNotation(p)}`;
+        btn.dataset.index = i;
+        btn.onclick = () => jawabSoal(i, btn);
+        pc.appendChild(btn);
+    });
+    updatePowerupUI();
+    document.getElementById('btnNext').innerHTML = (index === soalKuis.length - 1)
+        ? '<i class="fas fa-flag-checkered"></i> Lihat Hasil'
+        : '<i class="fas fa-arrow-right"></i> Soal Berikutnya';
+    renderLeaderboard();
+}
+
+function jawabSoal(pilihanIndex, btnElement) {
+    if (sudahMenjawab || quizEnded) return;
+    const data = soalKuis[currentIndex];
+    const isBenar = (pilihanIndex === data.jawaban);
+    const all = document.querySelectorAll('#pilihanContainer button');
+    all.forEach(t => t.disabled = true);
+
+    let poin = 0;
+    if (isBenar) {
+        poin = 100;
+        if (window._doubleNextSoal) { poin = 200; window._doubleNextSoal = false; document.getElementById('puDouble').classList.remove('active-effect'); }
+        skor += poin; playCorrectSound();
+    } else playWrongSound();
+
+    jawabanHistory.push({ soal: data, jawabanUser: pilihanIndex, benar: isBenar, poin });
+    const fb = document.getElementById('feedbackArea');
+    fb.style.display = 'block';
+    if (isBenar) {
+        fb.className = 'feedback benar';
+        fb.innerHTML = `✅ <strong>Benar!</strong> +${poin} poin`;
+    } else {
+        fb.className = 'feedback salah';
+        fb.innerHTML = `❌ <strong>Kurang tepat.</strong>
+            <div class="jawaban-benar">✅ Jawaban benar: <strong>${LABELS[data.jawaban]}. ${autoRenderMatrixNotation(data.pilihan[data.jawaban])}</strong></div>
+            <div class="penjelasan">💡 ${autoRenderMatrixNotation(data.penjelasan || '')}</div>`;
+    }
+    all.forEach((t, idx) => {
+        if (idx === data.jawaban) t.classList.add('benar');
+        else if (idx === pilihanIndex && !isBenar) t.classList.add('salah');
+    });
+    document.getElementById('skorTampil').textContent = skor;
+    sudahMenjawab = true;
+    document.getElementById('btnNext').disabled = false;
+    renderLeaderboard();
+}
+function nextSoal() {
+    if (quizEnded) return;
+    if (currentIndex < soalKuis.length - 1) { currentIndex++; loadSoal(currentIndex); }
+    else tampilkanHasil();
+}
+
+/* ============================================================
+   POWER-UP
+   ============================================================ */
+function updatePowerupUI() {
+    document.getElementById('puDoubleBadge').textContent = MAX_DOUBLE - doublePointUsed;
+    document.getElementById('pu5050Badge').textContent = MAX_5050 - fiftyFiftyUsed;
+    document.getElementById('puTimeAttackBadge').textContent = MAX_TIME_ATTACK - timeAttackUsed;
+    document.getElementById('puShieldBadge').textContent = MAX_SHIELD - shieldUsed;
+    document.getElementById('puAddTimeBadge').textContent = MAX_ADD_TIME - addTimeUsed;
+    document.getElementById('puDouble').disabled = (doublePointUsed >= MAX_DOUBLE) || sudahMenjawab || quizEnded;
+    document.getElementById('pu5050').disabled = (fiftyFiftyUsed >= MAX_5050) || sudahMenjawab || quizEnded;
+    document.getElementById('puTimeAttack').disabled = (timeAttackUsed >= MAX_TIME_ATTACK) || quizEnded;
+    document.getElementById('puShield').disabled = (shieldUsed >= MAX_SHIELD) || quizEnded;
+    document.getElementById('puAddTime').disabled = (addTimeUsed >= MAX_ADD_TIME) || quizEnded;
+}
+function useDoublePoint() {
+    if (doublePointUsed >= MAX_DOUBLE || sudahMenjawab) return;
+    doublePointUsed++; window._doubleNextSoal = true;
+    document.getElementById('puDouble').classList.add('active-effect');
+    updatePowerupUI();
+    showToast('⭐ Double Point aktif!', 'info');
+}
+function useFiftyFifty() {
+    if (fiftyFiftyUsed >= MAX_5050 || sudahMenjawab) return;
+    const data = soalKuis[currentIndex];
+    const tombol = [...document.querySelectorAll('#pilihanContainer button')];
+    const salah = tombol.map((_, i) => i).filter(i => i !== data.jawaban);
+    const elim = salah.sort(() => Math.random() - 0.5).slice(0, Math.max(1, salah.length - 1));
+    elim.forEach(i => { tombol[i].disabled = true; tombol[i].classList.add('eliminated'); });
+    fiftyFiftyUsed++; updatePowerupUI();
+    showToast('🎯 50:50 aktif!', 'info');
+}
+function useTimeAttack() {
+    if (timeAttackUsed >= MAX_TIME_ATTACK) return;
+    timeAttackUsed++; updatePowerupUI();
+    RealtimeAdapter.broadcast('TIME_ATTACK', { token: currentTokenData?.token, from: currentUser.nisn, delta: -10 });
+    showToast('⚡ Waktu lawan -10 detik!', 'success');
+}
+function useShield() {
+    if (shieldUsed >= MAX_SHIELD) return;
+    shieldUsed++; shieldActive = true;
+    let sisa = 60;
+    document.getElementById('shieldStatus').textContent = `🛡️ Aktif — 00:${String(sisa).padStart(2,'0')}`;
+    updatePowerupUI();
+    showToast('🛡️ Perisai aktif 1 menit!', 'success');
+    if (shieldTimer) clearInterval(shieldTimer);
+    shieldTimer = setInterval(() => {
+        sisa--;
+        if (sisa <= 0) { clearInterval(shieldTimer); shieldTimer = null; shieldActive = false; document.getElementById('shieldStatus').textContent = ''; }
+        else document.getElementById('shieldStatus').textContent = `🛡️ Aktif — 00:${String(sisa).padStart(2,'0')}`;
+    }, 1000);
+}
+function useAddTime() {
+    if (addTimeUsed >= MAX_ADD_TIME) return;
+    addTimeUsed++; timeLeft += 30;
+    updateTimerDisplay(); updatePowerupUI();
+    showToast('⏰ +30 detik!', 'success');
+}
+
+/* ============================================================
+   LEADERBOARD
+   ============================================================ */
+function renderLeaderboard() {
+    const box = document.getElementById('leaderboardBody');
+    if (!currentTokenData || !currentTokenData.peserta) {
+        box.innerHTML = '<p style="color:#808090;font-size:0.85rem;">Belum ada data.</p>';
+        return;
+    }
+    const list = currentTokenData.peserta.map(p => ({
+        nama: p.nama, nisn: p.nisn,
+        skor: p.nisn === currentUser.nisn ? skor : (p.skor || 0)
+    })).sort((a,b) => b.skor - a.skor);
+    box.innerHTML = list.map((p, i) => {
+        const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `#${i+1}`;
+        const me = p.nisn === currentUser.nisn ? ' me' : '';
+        return `<div class="lb-row${me}">
+            <span class="lb-rank">${medal}</span>
+            <span class="lb-name">${p.nama}${me ? ' (kamu)' : ''}</span>
+            <span class="lb-score">${p.skor} poin</span>
+        </div>`;
+    }).join('');
+}
+
+/* ============================================================
+   HASIL
+   ============================================================ */
+function tampilkanHasil() {
+    quizEnded = true; stopTimer(); stopGamesSound();
+    if (currentUser) store.pesertaSudahIkut[currentUser.nisn] = true;
+    saveStore(store);
+
+    document.getElementById('progressBar').style.width = '100%';
+    document.getElementById('progressText').textContent = `${soalKuis.length} / ${soalKuis.length}`;
+    document.querySelector('.soal-container').style.display = 'none';
+    document.getElementById('btnNext').style.display = 'none';
+    document.querySelector('.powerup-bar').style.display = 'none';
+    document.getElementById('leaderboardLive').style.display = 'none';
+    document.getElementById('hasilAkhir').style.display = 'block';
+
+    const benar = jawabanHistory.filter(h => h.benar).length;
+    const salah = jawabanHistory.length - benar;
+    document.getElementById('hasilNama').textContent = currentUser.nama;
+    document.getElementById('hasilNISN').textContent = 'NISN: ' + currentUser.nisn;
+    document.getElementById('hasilBenar').textContent = benar;
+    document.getElementById('hasilSalah').textContent = salah;
+    document.getElementById('skorAkhir').textContent = skor;
+
+    let peringkat = 1;
+    if (currentTokenData && currentTokenData.peserta) {
+        const list = currentTokenData.peserta.map(p => ({ nisn: p.nisn, skor: p.nisn === currentUser.nisn ? skor : (p.skor || 0) })).sort((a,b) => b.skor - a.skor);
+        peringkat = list.findIndex(x => x.nisn === currentUser.nisn) + 1;
+    }
+    document.getElementById('hasilPeringkat').textContent = '#' + peringkat;
+
+    const maxSkor = soalKuis.length * 100;
+    const persen = Math.round((skor / maxSkor) * 100);
+    if (persen >= 90) document.getElementById('hasilIcon').textContent = '🏆';
+    else if (persen >= 70) document.getElementById('hasilIcon').textContent = '🌟';
+    else if (persen >= 50) document.getElementById('hasilIcon').textContent = '📚';
+    else document.getElementById('hasilIcon').textContent = '💪';
+
+    document.getElementById('pesanAkhir').textContent = 
+        persen >= 90 ? 'Luar biasa! Kamu menguasai matriks!' :
+        persen >= 70 ? 'Bagus! Pemahamanmu sudah baik.' :
+        persen >= 50 ? 'Lumayan, tingkatkan lagi ya!' :
+        'Jangan menyerah, pelajari lagi materinya.';
+}
+
+function showPembahasan() {
+    const box = document.getElementById('pembahasanBox');
+    if (box.style.display === 'block') { box.style.display = 'none'; return; }
+    box.style.display = 'block';
+    box.innerHTML = `<div class="leaderboard-card">
+        <h3><i class="fas fa-book-open"></i> Pembahasan Jawaban</h3>
+        ${jawabanHistory.map((h, i) => `
+            <div class="latihan-item ${h.benar ? 'correct' : 'wrong'}" style="margin-bottom:12px;">
+                <div class="latihan-q">Soal ${i+1} (${h.soal.topik}): ${autoRenderMatrixNotation(h.soal.soal)}</div>
+                <p style="font-size:0.85rem;color:#b0b0c0;">
+                    Jawabanmu: <strong style="color:${h.benar ? '#6fe08a' : '#ff7d8a'}">${LABELS[h.jawabanUser]}. ${autoRenderMatrixNotation(h.soal.pilihan[h.jawabanUser])}</strong> 
+                    ${h.benar ? '✅' : '❌'} — Poin: ${h.poin}
+                </p>
+                ${!h.benar ? `<p style="font-size:0.85rem;color:#6fe08a;margin-top:6px;">✅ Jawaban benar: <strong>${LABELS[h.soal.jawaban]}. ${autoRenderMatrixNotation(h.soal.pilihan[h.soal.jawaban])}</strong></p>` : ''}
+                <p style="font-size:0.85rem;color:#9090a0;margin-top:6px;">💡 ${autoRenderMatrixNotation(h.soal.penjelasan || '')}</p>
+            </div>
+        `).join('')}
+    </div>`;
+}
+
+/* ============================================================
+   MATERI
+   ============================================================ */
+function bukaMateri() {
+    showOnly('materi');
+    renderTabsStatus();
+    switchPertemuan(currentPertemuan || 1);
+}
+function renderTabsStatus() {
+    document.querySelectorAll('#tabsPertemuan .tab-btn').forEach(btn => {
+        const p = parseInt(btn.dataset.pertemuan);
+        const open = store.pertemuan[p];
+        btn.classList.toggle('locked', !open);
+        btn.innerHTML = `Pertemuan ${p}` + (open ? '' : ' <i class="fas fa-lock lock-icon"></i>');
+    });
+}
+function switchPertemuan(p) {
+    currentPertemuan = p;
+    const open = store.pertemuan[p];
+    document.querySelectorAll('#tabsPertemuan .tab-btn').forEach(btn => btn.classList.toggle('active', parseInt(btn.dataset.pertemuan) === p));
+    const c = document.getElementById('materiContent');
+    if (!open) {
+        c.innerHTML = `<div class="locked-message"><i class="fas fa-lock"></i><h3>Pertemuan ${p} Terkunci</h3><p>Belum dibuka oleh guru.</p></div>`;
+        return;         
+    }
+    let html;
+    if (p === 1) html = materiPertemuan1();
+    else if (p === 2) html = materiPertemuan2();
+    else html = materiPertemuan3();
+    c.innerHTML = autoRenderMatrixNotation(html);
+}
+
+function materiPertemuan1() {
+    return `
+        <div class="topic-section">
+            <h3><i class="fas fa-book"></i> A. Definisi Matriks</h3>
+            <p>Matriks adalah susunan bilangan yang diatur dalam <strong>baris</strong> dan <strong>kolom</strong>, diapit tanda kurung.</p>
+            <div class="formula">A = [a<sub>ij</sub>] dengan i = baris, j = kolom</div>
+            <ul><li><strong>Baris</strong>: susunan mendatar.</li><li><strong>Kolom</strong>: susunan menurun.</li><li><strong>Elemen</strong>: bilangan dalam matriks.</li></ul>
+            <div class="example-box"><strong>Contoh:</strong> A = [1 2 3; 4 5 6] — elemen a₂₁ = 4.</div>
+        </div>
+        <div class="topic-section">
+            <h3><i class="fas fa-arrows-alt"></i> B. Ordo Matriks</h3>
+            <p>Ordo = <strong>jumlah baris × jumlah kolom</strong>.</p>
+            <div class="formula">Ordo = m × n</div>
+            <div class="example-box"><strong>Contoh:</strong> A = [1 2 3; 4 5 6] → ordo 2×3.</div>
+        </div>
+        <div class="topic-section">
+            <h3><i class="fas fa-plus-circle"></i> C. Penjumlahan Matriks</h3>
+            <p>Syarat: ordo kedua matriks sama.</p>
+            <div class="formula">(A + B)<sub>ij</sub> = a<sub>ij</sub> + b<sub>ij</sub></div>
+            <div class="example-box"><strong>Contoh:</strong> [2 4; 3 1] + [1 2; 0 5] = [3 6; 3 6]</div>
+        </div>
+        <div class="topic-section">
+            <h3><i class="fas fa-minus-circle"></i> D. Pengurangan Matriks</h3>
+            <p>Syarat: ordo kedua matriks sama.</p>
+            <div class="formula">(A - B)<sub>ij</sub> = a<sub>ij</sub> - b<sub>ij</sub></div>
+            <div class="example-box"><strong>Contoh:</strong> [5 3; 2 4] - [2 1; 3 2] = [3 2; -1 2]</div>
+        </div>
+        <div class="topic-section">
+            <h3><i class="fas fa-pencil-alt"></i> E. Latihan Pertemuan 1 (10 Soal)</h3>
+            <div class="latihan-container" id="latihanBox">${renderLatihan(1)}</div>
+        </div>`;
+}
+
+function materiPertemuan2() {
+    return `
+        <div class="topic-section">
+            <h3><i class="fas fa-times-circle"></i> A. Perkalian Skalar</h3>
+            <p>Setiap elemen dikalikan skalar.</p>
+            <div class="formula">k × A = [k × a<sub>ij</sub>]</div>
+            <div class="example-box"><strong>Contoh:</strong> 3 × [2 5; 1 4] = [6 15; 3 12]</div>
+        </div>
+        <div class="topic-section">
+            <h3><i class="fas fa-times"></i> B. Perkalian Dua Matriks</h3>
+            <p>Syarat: kolom A = baris B.</p>
+            <div class="formula">(A × B)<sub>ij</sub> = Σ a<sub>ik</sub> · b<sub>kj</sub></div>
+            <div class="example-box"><strong>Contoh:</strong> [1 2; 3 4] × [2 0; 1 3] = [4 6; 10 12]</div>
+        </div>
+        <div class="topic-section">
+            <h3><i class="fas fa-calculator"></i> C. Determinan Matriks 2×2</h3>
+            <div class="formula">det(A) = a · d - b · c</div>
+            <div class="example-box"><strong>Contoh:</strong> det [3 1; 4 2] = 3 · 2 - 1 · 4 = 2</div>
+            <ul><li>det = 0 → singular.</li><li>det ≠ 0 → non-singular.</li></ul>
+        </div>
+        <div class="topic-section">
+            <h3><i class="fas fa-pencil-alt"></i> D. Latihan Pertemuan 2 (10 Soal)</h3>
+            <div class="latihan-container" id="latihanBox">${renderLatihan(2)}</div>
+        </div>`;
+}
+
+function materiPertemuan3() {
+    return `
+        <div class="topic-section">
+            <h3><i class="fas fa-arrow-right-arrow-left"></i> A. Transpose Matriks</h3>
+            <p>Tukar baris menjadi kolom.</p>
+            <div class="formula">A<sup>T</sup> = [a<sub>ji</sub>]</div>
+            <div class="example-box"><strong>Contoh:</strong> [1 2 3; 4 5 6]<sup>T</sup> = [1 4; 2 5; 3 6]</div>
+        </div>
+        <div class="topic-section">
+            <h3><i class="fas fa-exchange-alt"></i> B. Invers Matriks 2×2</h3>
+            <p>Syarat: det(A) ≠ 0.</p>
+            <div class="formula">A<sup>-1</sup> = 1/det(A) × [d -b; -c a]</div>
+            <div class="example-box"><strong>Contoh:</strong> Invers [4 1; 2 1] = [0.5 -0.5; -1 2]</div>
+            <ul><li>det = 0 → tidak punya invers.</li><li>A × A⁻¹ = I.</li></ul>
+        </div>
+        <div class="topic-section">
+            <h3><i class="fas fa-pencil-alt"></i> C. Latihan Pertemuan 3 (10 Soal)</h3>
+            <div class="latihan-container" id="latihanBox">${renderLatihan(3)}</div>
+        </div>`;
+}
+
+function renderLatihan(p) {
+    const pool = soalLatihanMateri[p] || [];
+    return pool.map((s, i) => {
+        const opts = s.pilihan.map((o, idx) => `<button onclick="jawabLatihan(this, ${idx}, ${s.jawaban})">${LABELS[idx]}. ${autoRenderMatrixNotation(o)}</button>`).join('');
+        return `<div class="latihan-item">
+            <div class="latihan-q">${i+1}. ${autoRenderMatrixNotation(s.soal)}</div>
+            <div class="latihan-opts">${opts}</div>
+            <div class="latihan-feedback"></div>
+        </div>`;
+    }).join('');
+}
+
+function jawabLatihan(btn, pilihan, jawabanBenar) {
+    const parent = btn.closest('.latihan-item');
+    parent.querySelectorAll('.latihan-opts button').forEach(o => o.disabled = true);
+    const fb = parent.querySelector('.latihan-feedback');
+    if (pilihan === jawabanBenar) {
+        btn.classList.add('benar'); parent.classList.add('correct');
+        fb.className = 'latihan-feedback benar'; fb.textContent = '✅ Benar!';
+        playCorrectSound();
+    } else {
+        btn.classList.add('salah'); parent.classList.add('wrong');
+        fb.className = 'latihan-feedback salah'; fb.textContent = '❌ Kurang tepat. Jawaban benar: ' + LABELS[jawabanBenar];
+        playWrongSound();
+    }
+}
+
+/* ============================================================
+   INIT
+   ============================================================ */
+initAudio();
+
+RealtimeAdapter.listen((msg) => {
+    if (!msg) return;
+    if (msg.type === 'JOIN' && currentTokenData && msg.payload.token === currentTokenData.token) {
+        if (!currentTokenData.peserta.find(p => p.nisn === msg.payload.nisn)) {
+            currentTokenData.peserta.push({ nisn: msg.payload.nisn, nama: msg.payload.nama });
+            renderLobbyPeserta();
+        }
+    }
+    if (msg.type === 'START' && currentTokenData && msg.payload.token === currentTokenData.token) {
+        if (currentUser && currentUser.role === 'siswa') startKuis();
+    }
+    if (msg.type === 'START_QUIZ' && currentTokenData && msg.payload.token === currentTokenData.token) {
+        if (currentUser && currentUser.role === 'siswa') {
+            startKuis();
+            showToast('🎯 Kuis dimulai oleh guru!', 'success', 3000);
+        }
+    }
+    if (msg.type === 'TIME_ATTACK' && currentTokenData && msg.payload.token === currentTokenData.token) {
+        if (msg.payload.from !== currentUser.nisn) {
+            if (shieldActive) showToast('🛡️ Serangan diblokir oleh perisai!', 'info');
+            else { timeLeft = Math.max(0, timeLeft - 10); updateTimerDisplay(); showToast('⚡ Terkena serangan! -10 detik.', 'error'); }
+        }
+    }
+});
+
+console.log('✅ Aplikasi Matriks v9 siap (Header kuis dihapus, Token + Timer + Skor + Mute digabung ke Power-Up Bar).');
+</script>
+</body>
+</html>
